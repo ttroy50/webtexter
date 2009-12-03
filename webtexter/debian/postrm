@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -r /opt/maemo/usr/share/webtexter/
+
+gconftool -u /apps/m_webtexter/password
+ 
+exit 0
