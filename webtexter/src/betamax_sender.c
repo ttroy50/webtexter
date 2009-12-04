@@ -39,17 +39,17 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	{
 		case VOIPCHEAP:
 		{
-			baseurl = "https://myaccount.voipcheap.com/clx/sendsms.php";
+			baseurl = "https://www.voipcheap.com/myaccount/sendsms.php";
 			break;
 		}
 		case SMSDISCOUNT:
 		{
-			baseurl = "https://myaccount.smsdiscount.com/clx/sendsms.php";
+			baseurl = "https://www.smsdiscount.com/myaccount/sendsms.php";
 			break;
 		}
 		case LOWRATEVOIP:
 		{
-			baseurl = "https://myaccount.lowratevoip.com/clx/sendsms.php";
+			baseurl = "https://www.lowratevoip.com/myaccount/sendsms.php";
 			break;
 		}
 		default:
