@@ -48,8 +48,8 @@ G_BEGIN_DECLS
  */
 #define APP_NAME "webtexter"
 #define APP_VER "0.2"
-#define APP_SERVICE "com.setkia.webtexter"
-#define APP_METHOD "/com/setkia/webtexter"
+#define APP_SERVICE "org.maemo.webtexter"
+#define APP_METHOD "/org/maemo/webtexter"
 /* end defines */
 
 #define PORTRAIT_ENABLE "*#7678#*"

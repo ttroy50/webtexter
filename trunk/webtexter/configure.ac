@@ -85,7 +85,7 @@ AC_CONFIG_FILES([
     src/Makefile
     data/Makefile 
     po/Makefile.in
-    data/com.setkia.webtexter.service
+    data/org.maemo.webtexter.service
     data/webtexter.desktop
 ])
 

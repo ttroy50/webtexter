@@ -15,7 +15,7 @@
 #
  
 dbusdir=$(datadir)/dbus-1/services
-dbus_DATA=com.setkia.webtexter.service
+dbus_DATA=org.maemo.webtexter.service
 
 desktopdir=$(datadir)/applications/hildon
 desktop_DATA = webtexter.desktop

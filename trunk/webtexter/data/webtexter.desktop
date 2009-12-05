@@ -7,6 +7,6 @@ Exec=/usr/bin/webtexter
 Icon=webtexter
 X-Window-Icon=webtexter
 X-Window-Icon-Dimmed=webtexter
-X-Osso-Service=com.setkia.webtexter
+X-Osso-Service=org.maemo.webtexter
 X-Osso-Type=application/x-executable
 X-HildonDesk-ShowInToolbar=true
