@@ -26,7 +26,7 @@
 
 #include "message_logger.h"
 #include <rtcom-eventlogger/eventlogger.h>
-#include <rtcom-eventlogger-plugins/sms.h>
+/*#include <rtcom-eventlogger-plugins/sms.h>*/
 
 gboolean save_message(gchar* to, gchar* msg)
 {
