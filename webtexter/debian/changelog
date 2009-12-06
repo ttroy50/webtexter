@@ -1,3 +1,13 @@
+webtexter (0.3) unstable; urgency=low
+
+  * Changed service to org.maemo.webtexter
+  * Added support for VoIP providers blueface, voipcheap, smsdiscount, lowratevoip
+  * Added orientation support. This is turned off by default
+  * Added number swithces to turn on \ off features
+  * Added support for changing web proxy address
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 05 Dec 2009 18:46:00 -0600
+
 webtexter (0.2) unstable; urgency=low
 
   * Updated to include new icon and take away some debugging features
