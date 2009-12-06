@@ -908,10 +908,8 @@ int main( int argc, char* argv[] )
                              G_CALLBACK (settingsButton_clicked), &appdata);
     hildon_app_menu_append (appdata.menu, GTK_BUTTON (appdata.aboutButton));
     hildon_app_menu_append (appdata.menu, GTK_BUTTON (settingsButton));
-    // Show all menu items
-    gtk_widget_show_all (GTK_WIDGET (appdata.menu));
 
-    // Add the menu to the window
+    gtk_widget_show_all (GTK_WIDGET (appdata.menu));
     hildon_window_set_app_menu (HILDON_WINDOW (appdata.messageWindow), appdata.menu);
 
 
