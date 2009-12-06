@@ -11,6 +11,7 @@ Package: webtexter
 Architecture: any
 #Depends: maemo
 Description: An application to send web texts to Irish Mobile Operators, as well as selected VoIP Operators, including Blueface and Voipcheap
+XSBC-Bugtracker: https://garage.maemo.org/projects/webtexter
 XB-Maemo-Display-Name: WebTexter
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAAXNSR0IArs4c
