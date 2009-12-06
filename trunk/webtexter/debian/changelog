@@ -1,3 +1,10 @@
+webtexter (0.4) unstable; urgency=low
+
+  * Updated debian control file to include all build-depends libraries
+  * Updated debian control to include XBSC-Bugtracker
+
+ -- Thom Troy <ttroy50@gmail.com>  Sun, 06 Dec 2009 15:06:00 -0600
+ 
 webtexter (0.3) unstable; urgency=low
 
   * Changed service to org.maemo.webtexter
