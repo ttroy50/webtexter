@@ -926,6 +926,8 @@ int main( int argc, char* argv[] )
 
     appdata.msgEditor = hildon_text_view_new ();
     appdata.toEditor = hildon_text_view_new ();
+    g_object_set (G_OBJECT (appdata.toEditor), "hildon-input-default", HILDON_GTK_INPUT_MODE_NUMERIC, NULL);
+
     gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(appdata.msgEditor), GTK_WRAP_WORD_CHAR);
     appdata.msgSizeLabel = gtk_label_new ("0 Characters");
 
