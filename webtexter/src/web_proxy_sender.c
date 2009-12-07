@@ -99,7 +99,7 @@ gint web_proxy_send_message(AppSettings *settings, gchar* to, gchar* message, HT
 	if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "-1")) != NULL))
 	{
 		g_debug("Message Not sent to web proxy. Provider is %d \n Result is %s and url is %s",
-						provider, sender->buffer->str, url);
+						provider, sender->buffer->str, settings->proxy_url);
 		g_free(url);
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_LOGIN;
@@ -107,7 +107,7 @@ gint web_proxy_send_message(AppSettings *settings, gchar* to, gchar* message, HT
 	else if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "-2")) != NULL))
 	{
 		g_debug("Message Not sent to web proxy. Provider is %d \n Result is %s and url is %s",
-				provider, sender->buffer->str, url);
+				provider, sender->buffer->str, settings->proxy_url);
 		g_free(url);
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_SEND;
@@ -115,7 +115,7 @@ gint web_proxy_send_message(AppSettings *settings, gchar* to, gchar* message, HT
 	else if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "-5")) != NULL))
 	{
 		g_debug("Message Not sent to web proxy. Provider is %s \n Result is %s and url is %s",
-						provider, sender->buffer->str, url);
+						provider, sender->buffer->str, settings->proxy_url);
 		g_free(url);
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_OTHER;
