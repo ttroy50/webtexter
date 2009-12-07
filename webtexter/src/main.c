@@ -306,7 +306,17 @@ void settingsButton_clicked(GtkButton* button, AppData *appdata)
 
 	if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
 	{
+		gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), TRUE);
 		g_debug("settings response is good in settingsButton_Clicked \n");
+		/*
+		* Should be moved to response good if statment above
+		 */
+		set_username(appdata->gconf_client, appdata->settings.username);
+		set_password(appdata->gconf_client, appdata->settings.password);
+		set_number(appdata->gconf_client, appdata->settings.number);
+		set_provider(appdata->gconf_client, appdata->settings.provider);
+		set_proxy(appdata->gconf_client, appdata->settings.use_proxy_script);
+		set_proxy_url(appdata->gconf_client, appdata->settings.proxy_url);
 	}
 	else
 	{
@@ -315,22 +325,14 @@ void settingsButton_clicked(GtkButton* button, AppData *appdata)
 		 * TODO Do something here to check settings and possibly reshow the wizard and a banner showing that the user has to click
 		 * finish
 		 */
-
+		gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), FALSE);
 		GtkWidget *banner;
 		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
 					"Please re enter your settings as there appears to be a problem. When running please continue to the end and press finish");
 		hildon_banner_set_timeout(HILDON_BANNER(banner), 5000);
 		g_print("settingsButton_clicked wizard response is : %d \n", wizard_response);
 	}
-	/*
-	* Should be moved to response good if statment above
-	 */
-	set_username(appdata->gconf_client, appdata->settings.username);
-	set_password(appdata->gconf_client, appdata->settings.password);
-	set_number(appdata->gconf_client, appdata->settings.number);
-	set_provider(appdata->gconf_client, appdata->settings.provider);
-	set_proxy(appdata->gconf_client, appdata->settings.use_proxy_script);
-	set_proxy_url(appdata->gconf_client, appdata->settings.proxy_url);
+
 }
 
 void wizard_response(GtkDialog *dialog,
@@ -853,8 +855,8 @@ int main( int argc, char* argv[] )
 	appdata.contactList = (GList *) NULL;
 	appdata.connection = NULL;
 
-	GtkWidget *hboxtop, *hboxbottom, *hboxmiddle, *vbox;
-	GtkWidget *toButton, *sendButton, *settingsButton;
+	GtkWidget *hboxtop, *hboxbottom, *vbox;
+	GtkWidget *toButton, *settingsButton;
 	gboolean need_wizard = FALSE;
 
 
@@ -917,12 +919,11 @@ int main( int argc, char* argv[] )
     * create the main window UI
     */
     hboxtop = gtk_hbox_new(FALSE, 8);
-    hboxmiddle = gtk_hbox_new(FALSE, 8);
     hboxbottom = gtk_hbox_new(FALSE, 8);
     vbox = gtk_vbox_new(FALSE, 8);
 
     toButton = gtk_button_new_with_label("To :");
-    sendButton = gtk_button_new_with_label("Send");
+    appdata.sendButton = gtk_button_new_with_label("Send");
 
     appdata.msgEditor = hildon_text_view_new ();
     appdata.toEditor = hildon_text_view_new ();
@@ -933,8 +934,7 @@ int main( int argc, char* argv[] )
 
     gtk_box_pack_start (GTK_BOX (hboxtop), toButton, FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (hboxtop), appdata.toEditor, TRUE, TRUE, 0);
-    /*gtk_box_pack_start (GTK_BOX (hboxmiddle), appdata.msgEditor, FALSE, FALSE, 0);*/
-    gtk_box_pack_start (GTK_BOX (hboxbottom), sendButton, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (hboxbottom), appdata.sendButton, FALSE, FALSE, 0);
 
     gtk_box_pack_end (GTK_BOX (hboxbottom), appdata.msgSizeLabel, FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), hboxtop, FALSE, FALSE, 0);
@@ -954,7 +954,15 @@ int main( int argc, char* argv[] )
 
 		if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
 		{
+			gtk_widget_set_sensitive(GTK_WIDGET(appdata.sendButton), TRUE);
 			g_debug("wizard response is good in main \n");
+
+			set_username(appdata.gconf_client, appdata.settings.username);
+			set_password(appdata.gconf_client, appdata.settings.password);
+			set_number(appdata.gconf_client, appdata.settings.number);
+			set_provider(appdata.gconf_client, appdata.settings.provider);
+			set_proxy(appdata.gconf_client, appdata.settings.use_proxy_script);
+			set_proxy_url(appdata.gconf_client, appdata.settings.proxy_url);
 		}
 		else
 		{
@@ -963,22 +971,13 @@ int main( int argc, char* argv[] )
 			 * TODO Do something here to check settings and possibly reshow the wizard and a banner showing that the user has to click
 			 * finish
 			 */
-
+			gtk_widget_set_sensitive(GTK_WIDGET(appdata.sendButton), FALSE);
 			GtkWidget *banner;
 			banner = hildon_banner_show_information(GTK_WIDGET(appdata.messageWindow), NULL,
 						"Please re enter your settings as there appears to be a problem. When running please continue to the end and press finish");
 			hildon_banner_set_timeout(HILDON_BANNER(banner), 10000);
 			g_debug("main wizard response is %d \n", wizard_response);
 		}
-		/*
-		 * Should be moved to response good if statment above
-		 */
-		set_username(appdata.gconf_client, appdata.settings.username);
-		set_password(appdata.gconf_client, appdata.settings.password);
-		set_number(appdata.gconf_client, appdata.settings.number);
-		set_provider(appdata.gconf_client, appdata.settings.provider);
-		set_proxy(appdata.gconf_client, appdata.settings.use_proxy_script);
-		set_proxy_url(appdata.gconf_client, appdata.settings.proxy_url);
 	}
     /* Quit program when window is closed. */
     g_signal_connect (G_OBJECT (appdata.messageWindow), "delete_event",
@@ -992,7 +991,7 @@ int main( int argc, char* argv[] )
     g_signal_connect (G_OBJECT (toButton), "clicked",
                          G_CALLBACK (toButton_clicked), &appdata);
 
-    g_signal_connect (G_OBJECT (sendButton), "clicked",
+    g_signal_connect (G_OBJECT (appdata.sendButton), "clicked",
                              G_CALLBACK (sendButton_clicked), &appdata);
 
     g_signal_connect (G_OBJECT (appdata.msgBuffer), "changed",
