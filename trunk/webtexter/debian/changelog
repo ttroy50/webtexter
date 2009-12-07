@@ -1,3 +1,13 @@
+webtexter (0.5) unstable; urgency=low
+
+  * 4875 optify package
+  * 4878 To input should default to numeric input
+  * 4879 Remove gconf settings on uninstall
+  * 4880 If the settings wizard is exited prematurely it can cause a crash or instable behaviour in some instances 
+  * Updated description in control file and about box
+
+ -- Thom Troy <ttroy50@gmail.com>  Sun, 06 Dec 2009 15:06:00 -0600
+
 webtexter (0.4) unstable; urgency=low
 
   * Updated debian control file to include all build-depends libraries
