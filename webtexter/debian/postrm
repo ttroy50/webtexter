@@ -2,6 +2,6 @@
 
 rm -r /opt/maemo/usr/share/webtexter/
 
-gconftool -u /apps/m_webtexter/password
+gconftool --recursive-unset /apps/m_webtexter
  
 exit 0
