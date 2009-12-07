@@ -11,7 +11,7 @@ AC_PROG_INSTALL
 dnl AC_PREFIX_DEFAULT(/var/lib/install/usr)
 AC_PREFIX_DEFAULT(/usr)
 
-CFLAGS="$CFLAGS -Wall -ansi -pedantic -Wmissing-prototypes -Wmissing-declarations"
+CFLAGS="$CFLAGS -Wall -ansi -Wmissing-prototypes -Wmissing-declarations"
 
 PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.2 glib-2.0 >= 2.2 gnome-vfs-2.0 >= 2.2)
 AC_SUBST(DEPS_CFLAGS)
