@@ -496,7 +496,8 @@ void aboutButton_clicked (GtkButton* button, AppData *appdata)
 
 	gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG(about), APP_NAME);
 	gtk_about_dialog_set_version (GTK_ABOUT_DIALOG(about), APP_VER);
-	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about), "Send web texts to Irish Mobile Operators and selected VoIP operators");
+	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
+			"Send web texts to Irish Mobile Operators and selected VoIP operators. VoIP operators currently supported are Blueface, Voipcheap, SMSdiscount and lowratevoip. It is possible to send directly to the operator or through web scripts compatible with cabbage (http://cabbagetexter.com)");
 
 	gtk_dialog_run(GTK_DIALOG(about));
 	gtk_widget_destroy(GTK_WIDGET(about));
