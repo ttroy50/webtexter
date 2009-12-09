@@ -419,6 +419,7 @@ some_page_func (GtkNotebook *nb,
 			GtkRadioButton *voipcheap_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, VOIPCHEAP));
 			GtkRadioButton *smsdiscount_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, SMSDISCOUNT));
 			GtkRadioButton *lowratevoip_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, LOWRATEVOIP));
+			GtkRadioButton *otherbetamax_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, OTHER_BETAMAX));
 
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(o2_but)))
 				appsettings->provider = O2;
@@ -436,6 +437,8 @@ some_page_func (GtkNotebook *nb,
 				appsettings->provider = SMSDISCOUNT;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lowratevoip_but)))
 				appsettings->provider = LOWRATEVOIP;
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(otherbetamax_but)))
+				appsettings->provider = OTHER_BETAMAX;
 
 			return TRUE;
 		}
@@ -473,10 +476,7 @@ some_page_func (GtkNotebook *nb,
 			}
 			else
 			{
-				if(appsettings->use_proxy_script)
-					return TRUE;
-				else
-					return FALSE;
+				return FALSE;
 			}
 
 		}
@@ -617,9 +617,10 @@ gint create_settings_wizard(AppData *appdata)
 {
 	GtkWidget *wizard, *notebook;
 	GtkWidget *user_label, *pass_label, *number_label, *prov_label, *proxy_label, *done_label, *proxy_url_label;
+	GtkWidget *proxy_info_label, *url_info_label;
 	GtkWidget *user_entry, *pass_entry, *number_entry, *proxy_url_entry;
 	GtkWidget *voda_button, *o2_button, *met_button, *three_button, *blueface_button, *voipcheap_button, *smsdiscount_button;
-	GtkWidget *lowratevoip_button;
+	GtkWidget *lowratevoip_button, *other_betamax_button;
 	GtkWidget *yes_proxy, *no_proxy;
 	GtkWidget *up_hbox, *prov_hbox, *proxy_hbox, *proxy_url_hbox;
 	GtkWidget *prov_panable;
@@ -640,6 +641,7 @@ gint create_settings_wizard(AppData *appdata)
 	char* voipc = VOIPCHEAP_L;
 	char* smsdisc = SMSDISC_L;
 	char* lowrv = LOWRV_L;
+	char* otherbm = OTHER_BETA_L;
 
 	user_label = gtk_label_new ("Username");
 	pass_label = gtk_label_new ("Password");
@@ -648,6 +650,8 @@ gint create_settings_wizard(AppData *appdata)
 	proxy_label = gtk_label_new ("Use Web Proxy");
 	proxy_url_label = gtk_label_new ("Web Proxy Address (http://...");
 	done_label = gtk_label_new("Your settings are now configured. Enjoy using webtexter");
+	proxy_info_label = gtk_label_new("Not used for Blueface or Other Betamax");
+	url_info_label = gtk_label_new("For Other Betamax providers, please enter \nthe URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 
 	user_entry = hildon_entry_new (HILDON_SIZE_AUTO);
 	pass_entry = hildon_entry_new (HILDON_SIZE_AUTO);
@@ -698,6 +702,11 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_button_set_label(GTK_BUTTON(lowratevoip_button), lowrv);
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(lowratevoip_button), FALSE);
 	hildon_gtk_widget_set_theme_size(lowratevoip_button, HILDON_SIZE_FINGER_HEIGHT);
+
+	other_betamax_button = hildon_gtk_radio_button_new_from_widget(HILDON_SIZE_AUTO , GTK_RADIO_BUTTON(lowratevoip_button));
+	gtk_button_set_label(GTK_BUTTON(other_betamax_button), otherbm);
+	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(other_betamax_button), FALSE);
+	hildon_gtk_widget_set_theme_size(other_betamax_button, HILDON_SIZE_FINGER_HEIGHT);
 
 
 	yes_proxy = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
@@ -770,6 +779,11 @@ gint create_settings_wizard(AppData *appdata)
 				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(lowratevoip_button), TRUE);
 				break;
 			}
+			case OTHER_BETAMAX:
+			{
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(other_betamax_button), TRUE);
+				break;
+			}
 		}
 	}
 	else
@@ -801,6 +815,7 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_box_pack_start (GTK_BOX (prov_hbox), voipcheap_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), smsdiscount_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), lowratevoip_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (prov_hbox), other_betamax_button, FALSE, FALSE, 0);
 
 	hildon_pannable_area_add_with_viewport (
 	    HILDON_PANNABLE_AREA (prov_panable), prov_hbox);
@@ -809,9 +824,12 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_box_pack_start (GTK_BOX (proxy_hbox), proxy_label, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (proxy_hbox), yes_proxy, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (proxy_hbox), no_proxy, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (proxy_hbox), proxy_info_label, FALSE, FALSE, 0);
+
 
 	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), proxy_url_label, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), proxy_url_entry, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), url_info_label, FALSE, FALSE, 0);
 
 	/* Append pages */
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), up_hbox, NULL);

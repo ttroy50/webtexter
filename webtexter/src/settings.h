@@ -52,6 +52,7 @@ G_BEGIN_DECLS
 #define SMSDISC_S "s"
 #define LOWRV_L "Lowratevoip"
 #define LOWRV_S "l"
+#define OTHER_BETA_L "Other Betamax"
 
 typedef enum {
   O2 = 1,
@@ -61,7 +62,8 @@ typedef enum {
   BLUEFACE = 5,
   VOIPCHEAP = 6,
   SMSDISCOUNT = 7,
-  LOWRATEVOIP = 8
+  LOWRATEVOIP = 8,
+  OTHER_BETAMAX = 9
 
 } Providers;
 
