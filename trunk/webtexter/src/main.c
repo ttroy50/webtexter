@@ -649,9 +649,12 @@ gint create_settings_wizard(AppData *appdata)
 	prov_label = gtk_label_new ("Provider");
 	proxy_label = gtk_label_new ("Use Web Proxy");
 	proxy_url_label = gtk_label_new ("Web Proxy Address (http://...");
-	done_label = gtk_label_new("Your settings are now configured. Enjoy using webtexter");
-	proxy_info_label = gtk_label_new("Not used for Blueface or Other Betamax");
-	url_info_label = gtk_label_new("For Other Betamax providers, please enter \nthe URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
+	done_label = gtk_label_new(
+		"Your settings are now configured. Enjoy using webtexter");
+	proxy_info_label = gtk_label_new(
+		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface or Other Betamax");
+	url_info_label = gtk_label_new(
+		"For a named provider:\nif web proxy selected enter script address\nif web proxy not selected enter anything\nFor Other Betamax providers:\nplease enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 
 	user_entry = hildon_entry_new (HILDON_SIZE_AUTO);
 	pass_entry = hildon_entry_new (HILDON_SIZE_AUTO);
