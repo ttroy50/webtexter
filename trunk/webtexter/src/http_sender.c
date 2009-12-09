@@ -103,12 +103,13 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 {
 
-	if(settings->use_proxy_script && settings->provider != BLUEFACE)
+	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX))
 	{
 		return web_proxy_send_message(settings, to, msg, proxy);
 	}
 
-	if(settings->provider == VOIPCHEAP || settings->provider == SMSDISCOUNT || settings->provider == LOWRATEVOIP)
+	if(settings->provider == VOIPCHEAP || settings->provider == SMSDISCOUNT || settings->provider == LOWRATEVOIP
+			|| settings->provider == OTHER_BETAMAX)
 	{
 		return betamax_send_message(settings, to, msg, proxy);
 	}

@@ -52,6 +52,11 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 			baseurl = "https://www.lowratevoip.com/myaccount/sendsms.php";
 			break;
 		}
+		case OTHER_BETAMAX:
+		{
+			baseurl = g_strdup(settings->proxy_url);
+			break;
+		}
 		default:
 		{
 			g_debug("provider not supported by betamax");
@@ -80,6 +85,8 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	{
 		g_debug("Message Not sent to betamax. Login error %s", baseurl);
 		g_free(url);
+		if(settings->provider == OTHER_BETAMAX)
+			g_free(baseurl);
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_LOGIN;
 	}
@@ -95,6 +102,8 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 		g_debug("Message Not sent betamax %s",
 						baseurl);
 		g_free(url);
+		if(settings->provider == OTHER_BETAMAX)
+			g_free(baseurl);
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_OTHER;
 	}
