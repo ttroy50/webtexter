@@ -9,11 +9,13 @@ Standards-Version: 3.7.2
 
 Package: webtexter
 Architecture: any
-#Depends: maemo
-Description: An application to send web texts to Irish Mobile Operators, as well as selected VoIP Operators. 
- VoIP operators currently supported are Blueface, Voipcheap, SMSdiscount and lowratevoip.
- It is possible to send directly to the operator or through web scripts compatible with cabbage (http://cabbagetexter.com)
-XSBC-Bugtracker: https://garage.maemo.org/projects/webtexter
+Depends: ${shlibs:Depends}
+Description: Send web texts to Irish Mobile Operators, as well as selected VoIP Operators. 
+ Irish Operators supported are O2 Ireland, Vodafone Ireland, Meteor and Three Ireland.
+ VoIP operators directly supported are Blueface, Voipcheap, SMSdiscount and lowratevoip.
+ It is also possible to send to other Betamax style providers.
+ You can send directly to the operator or through web scripts compatible with cabbage (http://cabbagetexter.com)
+XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1147
 XB-Maemo-Display-Name: WebTexter
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAAXNSR0IArs4c
