@@ -95,7 +95,7 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 		g_debug("Message sent to betamax");
 		g_free(url);
 		g_string_free(sender->buffer, TRUE);
-		return ERROR_SEND;
+		return SUCCESS;
 	}
 	else
 	{
