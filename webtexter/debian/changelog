@@ -1,3 +1,13 @@
+webtexter (0.6) unstable; urgency=low
+
+  * 4890 Add a way to send to unknown betamax style sites
+  * 4891 Sending directly to betamax sites shows not sent even though the message is sent correctly	
+  * 4903 Crash when sending
+  * Updated description
+  * Added help information to settings wizard to explain some settings
+
+ -- Thom Troy <ttroy50@gmail.com>  Wed, 16 Dec 2009 23:09:00 -0600
+ 
 webtexter (0.5) unstable; urgency=low
 
   * 4875 optify package
