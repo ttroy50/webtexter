@@ -61,12 +61,14 @@ void get_iap_details(ConIcConnection *connection,
                                   ConIcConnectionEvent *event,
                                   AppData *appdata)
 {
+	g_debug("get_iap_details\n");
     ConIcConnectionStatus status = con_ic_connection_event_get_status(event);
     HTTP_Proxy proxy;
-
+    proxy.ignore_hosts = NULL;
 
 
     if (status == CON_IC_STATUS_CONNECTED) {
+    	g_debug("connected\n");
         proxy.proxy_type = con_ic_connection_get_proxy_mode(connection);
         /* Do things based on specified proxy mode */
         switch (proxy.proxy_type) {
@@ -110,6 +112,7 @@ void get_iap_details(ConIcConnection *connection,
         if(appdata->msg_to_send)
         {
         	prepare_to_send(appdata, &proxy);
+        	g_debug("back from prepare to send\n");
         }
         appdata->msg_to_send = FALSE;
 
@@ -120,6 +123,7 @@ void get_iap_details(ConIcConnection *connection,
     }
     else
     {
+    	g_debug("Not connected\n");
     	/*only in here for debugging and testing on the emulator
     	 * Should not be there when running on a device
     	 */
