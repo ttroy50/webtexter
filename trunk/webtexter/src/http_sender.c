@@ -70,7 +70,10 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 		 * Saving messages is still experimental so only available in debug mode
 		 */
 		if(appdata->settings.savemsg)
+		{
+			g_debug("attempting to save msg\n");
 			save_message(to, msg);
+		}
 
 		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
 						"Message Sent");

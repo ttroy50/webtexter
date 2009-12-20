@@ -540,17 +540,21 @@ void sendButton_clicked (GtkButton* button, AppData *appdata)
 			appdata->settings.orientation_enabled = TRUE;
 		}
 	}
-	else if(strcmp(to, DEBUG_ENABLE) == 0)
+	else if(strcmp(to, SAVEMSG_ENABLE) == 0)
 	{
 
 		if(appdata->settings.savemsg)
 		{
-			g_debug("savemsg enabled");
+			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
+							"Message Saving disabled.");
+			g_debug("savemsg disabled");
 			appdata->settings.savemsg = FALSE;
 		}
 		else
 		{
-			g_debug("savemsg disabled");
+			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
+										"Message Saving Enabled.");
+			g_debug("savemsg enabled");
 			appdata->settings.savemsg = TRUE;
 		}
 	}
