@@ -53,6 +53,7 @@ G_BEGIN_DECLS
 #define LOWRV_L "Lowratevoip"
 #define LOWRV_S "l"
 #define OTHER_BETA_L "Other Betamax"
+#define WEBSMSRU_L "WebSMS.ru"
 
 typedef enum {
   O2 = 1,
@@ -63,7 +64,8 @@ typedef enum {
   VOIPCHEAP = 6,
   SMSDISCOUNT = 7,
   LOWRATEVOIP = 8,
-  OTHER_BETAMAX = 9
+  OTHER_BETAMAX = 9,
+  WEBSMSRU = 10
 
 } Providers;
 
