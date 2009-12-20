@@ -100,6 +100,22 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 	return TRUE;
 }
 
+gint get_max_msg_size(AppSettings *settings)
+{
+	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX))
+	{
+		return 800;
+	}
+	else if(settings->provider == BLUEFACE)
+	{
+		return 160;
+	}
+	else
+	{
+		return 160;
+	}
+}
+
 gboolean set_username(GConfClient *client, const gchar* username)
 {
 	return gconf_client_set_string (client,
