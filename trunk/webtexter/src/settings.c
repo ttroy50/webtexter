@@ -52,6 +52,7 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 	settings->orientation_enabled = FALSE;
 	settings->emulator = FALSE;
 	settings->proxy_url = NULL;
+	settings->extra_logging = FALSE;
 
 	settings->username = gconf_client_get_string(client,GCONF_USER_KEY, NULL);
 	settings->password = gconf_client_get_string(client,GCONF_PASS_KEY, NULL);
@@ -75,6 +76,7 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 		settings->use_proxy_script = TRUE;
 		settings->savemsg = FALSE;
 		settings->emulator = FALSE;
+		settings->extra_logging = FALSE;
 
 		return FALSE;
 	}

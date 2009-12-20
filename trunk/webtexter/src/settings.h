@@ -77,6 +77,7 @@ typedef struct
 	gboolean savemsg;
 	gboolean orientation_enabled;
 	gboolean emulator;
+	gboolean extra_logging;
 	gchar* proxy_url;
 
 } AppSettings;

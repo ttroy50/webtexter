@@ -54,6 +54,7 @@ G_BEGIN_DECLS
 
 #define PORTRAIT_ENABLE "*#7678#*"
 #define SAVEMSG_ENABLE "*#3328#*"
+#define EXTRA_LOGGING_ENABLE "*#9898#*"
 
 #define MAX_MSG_SIZE 160
 

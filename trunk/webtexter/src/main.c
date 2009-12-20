@@ -558,7 +558,23 @@ void sendButton_clicked (GtkButton* button, AppData *appdata)
 			appdata->settings.savemsg = TRUE;
 		}
 	}
-
+	else if(strcmp(to, EXTRA_LOGGING_ENABLE) == 0)
+	{
+		if(appdata->settings.extra_logging)
+		{
+			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
+							"Extra Logging disabled.");
+			g_debug("extra_logging disabled");
+			appdata->settings.extra_logging = FALSE;
+		}
+		else
+		{
+			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
+										"Extra Logging Enabled.");
+			g_debug("extra_logging enabled");
+			appdata->settings.extra_logging = TRUE;
+		}
+	}
 	else if(msgCharCount == 0)
 	{
 		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
