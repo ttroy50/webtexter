@@ -81,12 +81,19 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 
 	http_send_curl(baseurl, sender, HTTP_POST, url, proxy);
 
+	if(settings->extra_logging)
+		g_debug("returned html is %s", sender->buffer->str);
+
 	if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "password")) != NULL))
 	{
 		g_debug("Message Not sent to betamax. Login error %s", baseurl);
+		if(settings->extra_logging)
+			g_debug("post data is %s", url);
+
 		g_free(url);
 		if(settings->provider == OTHER_BETAMAX)
 			g_free(baseurl);
+
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_LOGIN;
 	}
@@ -94,6 +101,8 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	{
 		g_debug("Message sent to betamax");
 		g_free(url);
+		if(settings->provider == OTHER_BETAMAX)
+			g_free(baseurl);
 		g_string_free(sender->buffer, TRUE);
 		return SUCCESS;
 	}
@@ -101,6 +110,9 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	{
 		g_debug("Message Not sent betamax %s",
 						baseurl);
+		if(settings->extra_logging)
+			g_debug("post data is %s", url);
+
 		g_free(url);
 		if(settings->provider == OTHER_BETAMAX)
 			g_free(baseurl);
