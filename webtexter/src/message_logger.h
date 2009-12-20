@@ -26,6 +26,7 @@
 #define SERVICE "RTCOM_EL_SERVICE_SMS"
 #define EVENT_OUTBOUND "RTCOM_EL_EVENTTYPE_SMS_OUTBOUND"
 #define LOCAL_UID "ring/tel/ring"
+#define MYSELF "<SelfHandle>"
 G_BEGIN_DECLS
 
 gboolean save_message(gchar* to, gchar* msg);
