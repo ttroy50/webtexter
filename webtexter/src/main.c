@@ -580,13 +580,12 @@ void sendButton_clicked (GtkButton* button, AppData *appdata)
 		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
 				"Cannot send. Message is empty");
 	}
-	else if (msgCharCount > MAX_MSG_SIZE)
+	else if (msgCharCount > get_max_msg_size(&appdata->settings))
 	{
-		/*
-		 * TODO MAX size should come from the define in the message as well as the if
-		 */
+		gchar *message = g_strdup_printf("Message Cannot be greater than %d Characters", get_max_msg_size(&appdata->settings));
 		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
-						"Cannot Send more than 160 characters");
+						message);
+		g_free(message);
 	}
 	else
 	{
@@ -619,11 +618,13 @@ static void msg_changed(GtkTextBuffer *textbuffer, AppData *appdata)
 	gchar* labelText = g_strdup_printf("%d Characters", msgCharCount);
 	gtk_label_set_text(GTK_LABEL(appdata->msgSizeLabel), labelText);
 
-	if(msgCharCount == MAX_MSG_SIZE + 1)
+	if(msgCharCount == get_max_msg_size(&appdata->settings) + 1)
 	{
 		GtkWidget *msgToBigBanner;
+		gchar *message = g_strdup_printf("Message Cannot be greater than %d Characters", get_max_msg_size(&appdata->settings));
 		msgToBigBanner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
-						"Message Cannot be greater than 160 Characters");
+						message);
+		g_free(message);
 	}
 
 	g_free(labelText);
