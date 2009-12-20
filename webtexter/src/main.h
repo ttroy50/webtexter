@@ -53,7 +53,7 @@ G_BEGIN_DECLS
 /* end defines */
 
 #define PORTRAIT_ENABLE "*#7678#*"
-#define DEBUG_ENABLE "*#3328#*"
+#define SAVEMSG_ENABLE "*#3328#*"
 
 #define MAX_MSG_SIZE 160
 
