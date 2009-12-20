@@ -33,7 +33,8 @@ webtexter_SOURCES = \
 	src/network_utilities.h src/network_utilities.c \
 	src/message_logger.h src/message_logger.c \
 	src/blueface_sender.h src/blueface_sender.c \
-	src/betamax_sender.h src/betamax_sender.c
+	src/betamax_sender.h src/betamax_sender.c \
+	src/websmsru_sender.h src/websmsru_sender.c
 # /Sources
 
 # LDADD

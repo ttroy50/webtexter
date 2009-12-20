@@ -10,4 +10,5 @@ EXTRA_DIST = \
 	network_utilities.h network_utilities.c \
 	message_logger.h message_logger.c \
 	blueface_sender.h blueface_sender.c \
-	betamax_sender.h betamax_sender.h
+	betamax_sender.h betamax_sender.h \
+	websmsru_sender.h \ websmsru_sender.c
