@@ -30,6 +30,7 @@
 #include "vodafone_sender.h"
 #include "meteor_sender.h"
 #include "three_sender.h"
+#include "websmsru_sender.h"
 #include "blueface_sender.h"
 #include "web_proxy_sender.h"
 #include "betamax_sender.h"
@@ -106,7 +107,7 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 {
 
-	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX))
+	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX && settings->provider != WEBSMSRU))
 	{
 		return web_proxy_send_message(settings, to, msg, proxy);
 	}
@@ -235,6 +236,10 @@ gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 	else if(settings->provider == BLUEFACE)
 	{
 		return blueface_send_message(settings, to, msg, proxy);
+	}
+	else if(settings->provider == WEBSMSRU)
+	{
+		return websmsru_send_message(settings, to, msg, proxy);
 	}
 	else
 	{

@@ -102,7 +102,8 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 
 gint get_max_msg_size(AppSettings *settings)
 {
-	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX))
+	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX
+			&& settings->provider != WEBSMSRU))
 	{
 		return 800;
 	}
