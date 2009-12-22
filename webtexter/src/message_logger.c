@@ -28,6 +28,7 @@
 #include <rtcom-eventlogger/eventlogger.h>
 #include <libebook/e-book.h>
 #include <libosso-abook/osso-abook.h>
+#include <uuid/uuid.h>
 /*#include <rtcom-eventlogger-plugins/sms.h>*/
 
 gboolean save_message(gchar* to, gchar* msg)
@@ -199,7 +200,32 @@ gboolean save_message(gchar* to, gchar* msg)
 		RTCOM_EL_EVENT_SET_FIELD (ev, start_time, time(NULL));
 		RTCOM_EL_EVENT_SET_FIELD (ev, free_text, msg);
 
-		rtcom_el_add_event (el, ev, NULL);
+		gint id = rtcom_el_add_event (el, ev, NULL);
+
+		if(id < 0)
+		{
+			g_debug("saving message and id is -1. Error encountered.");
+		}
+		else
+		{
+			/*
+			 * Added because if a message token isn't added it means you can't open the message in conversations
+			 * to forward it.
+			 */
+
+			uuid_t uuid;
+			char key[UUID_STR_LEN + 1];
+			uuid_generate_random (uuid);
+			uuid_unparse(uuid, key);
+
+			gchar * token = g_strdup_printf("webt-%s", key);
+			g_debug("header is %s", token);
+			gint header_id = rtcom_el_add_header(el, id, "message-token", token, NULL);
+			if(header_id == -1)
+				g_debug("header insertion failed");
+
+			g_free(token);
+		}
 		rtcom_el_event_free (ev);
 		g_free(remote_uid);
 	}
