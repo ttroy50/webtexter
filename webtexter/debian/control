@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Thom Troy <ttroy50@gmail.com>
 Build-Depends: debhelper (>= 5), libhildondesktop1-dev, libgtk2.0-dev, libcurl3-dev, librtcom-eventlogger-dev,
                libosso-gnomevfs2-dev, libglib2.0-dev, libdbus-glib-1-dev, libosso-dev, libhildonfm2-dev, libgconf2-dev,
-               libconic0-dev, libosso-abook-dev, libhildon1-dev, mce-dev, osso-af-settings, maemo-optify
+               libconic0-dev, libosso-abook-dev, libhildon1-dev, mce-dev, osso-af-settings, maemo-optify, uuid-dev
 Standards-Version: 3.7.2
 
 Package: webtexter
