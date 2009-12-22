@@ -2,6 +2,7 @@
 #update the icon cache
 gtk-update-icon-cache -f /usr/share/icons/hicolor
 
-mkdir -p /opt/maemo/usr/share/webtexter/cookies 777
+mkdir -p /opt/maemo/usr/share/webtexter/cookies 
+chmod 777 /opt/maemo/usr/share/webtexter/cookies
 
 exit 0
