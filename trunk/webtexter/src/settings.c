@@ -164,3 +164,11 @@ gboolean set_proxy_url(GConfClient *client, const gchar* proxy_url)
             proxy_url,
             NULL);
 }
+
+gboolean set_savemsg(GConfClient *client, gboolean savemsg)
+{
+	return gconf_client_set_bool (client,
+			GCONF_SAVEMSG_KEY,
+           	savemsg,
+            NULL);
+}
