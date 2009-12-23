@@ -92,6 +92,7 @@ gboolean set_password(GConfClient *client, const gchar* password);
 gboolean set_provider(GConfClient *client, gint provider);
 gboolean set_proxy(GConfClient *client, gboolean use_proxy);
 gboolean set_proxy_url(GConfClient *client, const gchar* proxy_url);
+gboolean set_savemsg(GConfClient *client, gboolean savemsg);
 gint get_max_msg_size(AppSettings *settings);
 
 G_END_DECLS

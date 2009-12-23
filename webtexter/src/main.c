@@ -317,6 +317,7 @@ void settingsButton_clicked(GtkButton* button, AppData *appdata)
 		set_provider(appdata->gconf_client, appdata->settings.provider);
 		set_proxy(appdata->gconf_client, appdata->settings.use_proxy_script);
 		set_proxy_url(appdata->gconf_client, appdata->settings.proxy_url);
+		set_savemsg(appdata->gconf_client, appdata->settings.savemsg);
 	}
 	else
 	{
@@ -348,7 +349,7 @@ on_page_switch (GtkNotebook *notebook,
                 guint num,
                 GtkDialog *wizard)
 {
-	if(num != 4)
+	if(num != 5)
 		gtk_dialog_set_response_sensitive (GTK_DIALOG (wizard),
 		                                       HILDON_WIZARD_DIALOG_FINISH,
 		                                       FALSE);
@@ -483,6 +484,20 @@ some_page_func (GtkNotebook *nb,
 			}
 
 		}
+		case 4:
+		{
+			GtkRadioButton *yes_save_but = GTK_RADIO_BUTTON(g_list_nth_data(children, 1));
+			GtkRadioButton *no_save_but = GTK_RADIO_BUTTON(g_list_nth_data(children, 2));
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(yes_save_but)))
+			{
+				appsettings->savemsg = TRUE;
+			}
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(no_save_but)))
+			{
+				appsettings->savemsg = FALSE;
+			}
+				return TRUE;
+		}
 		default:
 			return TRUE;
 	}
@@ -541,24 +556,6 @@ void sendButton_clicked (GtkButton* button, AppData *appdata)
 			g_debug("portrait mode enabled");
 			orientation_init(appdata);
 			appdata->settings.orientation_enabled = TRUE;
-		}
-	}
-	else if(strcmp(to, SAVEMSG_ENABLE) == 0)
-	{
-
-		if(appdata->settings.savemsg)
-		{
-			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
-							"Message Saving disabled.");
-			g_debug("savemsg disabled");
-			appdata->settings.savemsg = FALSE;
-		}
-		else
-		{
-			banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
-										"Message Saving Enabled.");
-			g_debug("savemsg enabled");
-			appdata->settings.savemsg = TRUE;
 		}
 	}
 	else if(strcmp(to, EXTRA_LOGGING_ENABLE) == 0)
@@ -641,12 +638,13 @@ gint create_settings_wizard(AppData *appdata)
 {
 	GtkWidget *wizard, *notebook;
 	GtkWidget *user_label, *pass_label, *number_label, *prov_label, *proxy_label, *done_label, *proxy_url_label;
-	GtkWidget *proxy_info_label, *url_info_label;
+	GtkWidget *proxy_info_label, *url_info_label, *savemsg_label, *savemsg_info_label;
 	GtkWidget *user_entry, *pass_entry, *number_entry, *proxy_url_entry;
 	GtkWidget *voda_button, *o2_button, *met_button, *three_button, *blueface_button, *voipcheap_button, *smsdiscount_button;
 	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button;
 	GtkWidget *yes_proxy, *no_proxy;
-	GtkWidget *up_hbox, *prov_hbox, *proxy_hbox, *proxy_url_hbox;
+	GtkWidget *yes_savemsg, *no_savemsg;
+	GtkWidget *up_hbox, *prov_hbox, *proxy_hbox, *proxy_url_hbox, *savemsg_hbox;
 	GtkWidget *prov_panable;
 
 	notebook = gtk_notebook_new ();
@@ -656,6 +654,7 @@ gint create_settings_wizard(AppData *appdata)
 	prov_hbox = gtk_vbox_new(FALSE, 8);
 	proxy_hbox = gtk_vbox_new(FALSE, 8);
 	proxy_url_hbox = gtk_vbox_new(FALSE, 8);
+	savemsg_hbox = gtk_vbox_new(FALSE, 8);
 
 	char* voda = VODA_L;
 	char* o2 = O2_L;
@@ -675,11 +674,14 @@ gint create_settings_wizard(AppData *appdata)
 	proxy_label = gtk_label_new ("Use Web Proxy");
 	proxy_url_label = gtk_label_new ("Web Proxy Address (http://...");
 	done_label = gtk_label_new(
-		"Your settings are now configured. Enjoy using webtexter");
+		"Your settings are now configured. \nEnjoy using webtexter");
 	proxy_info_label = gtk_label_new(
 		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface or Other Betamax");
 	url_info_label = gtk_label_new(
 		"For a named provider:\nif web proxy selected enter script address\nif web proxy not selected enter anything\nFor Other Betamax providers:\nplease enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
+	savemsg_label = gtk_label_new("Save sent messages:");
+	savemsg_info_label = gtk_label_new(
+		"Allows you to save sent messages.\nAfter saving they appear in the \nconversations application");
 
 	user_entry = hildon_entry_new (HILDON_SIZE_AUTO);
 	pass_entry = hildon_entry_new (HILDON_SIZE_AUTO);
@@ -750,6 +752,15 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_button_set_label(GTK_BUTTON(no_proxy), "Don't use Web Proxy");
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(no_proxy), FALSE);
 	hildon_gtk_widget_set_theme_size(no_proxy, HILDON_SIZE_FINGER_HEIGHT);
+
+	yes_savemsg = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
+	gtk_button_set_label(GTK_BUTTON(yes_savemsg), "Save sent messages");
+	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(yes_savemsg), FALSE);
+	hildon_gtk_widget_set_theme_size(yes_savemsg, HILDON_SIZE_FINGER_HEIGHT);
+	no_savemsg = hildon_gtk_radio_button_new_from_widget(HILDON_SIZE_AUTO , GTK_RADIO_BUTTON(yes_savemsg));
+	gtk_button_set_label(GTK_BUTTON(no_savemsg), "Don't save sent messages");
+	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(no_savemsg), FALSE);
+	hildon_gtk_widget_set_theme_size(no_savemsg, HILDON_SIZE_FINGER_HEIGHT);
 
 	/*
 	 * Set Default or already set values
@@ -837,6 +848,15 @@ gint create_settings_wizard(AppData *appdata)
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(no_proxy), TRUE);
 	}
 
+	if(appdata->settings.savemsg)
+	{
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(yes_savemsg), TRUE);
+	}
+	else
+	{
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(no_savemsg), TRUE);
+	}
+
 	gtk_box_pack_start (GTK_BOX (up_hbox), user_label, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (up_hbox), user_entry, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (up_hbox), pass_label, FALSE, FALSE, 0);
@@ -866,16 +886,24 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_box_pack_start (GTK_BOX (proxy_hbox), proxy_info_label, FALSE, FALSE, 0);
 
 
+
 	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), proxy_url_label, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), proxy_url_entry, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (proxy_url_hbox), url_info_label, FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (savemsg_hbox), savemsg_label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (savemsg_hbox), yes_savemsg, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (savemsg_hbox), no_savemsg, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (savemsg_hbox), savemsg_info_label, FALSE, FALSE, 0);
 
 	/* Append pages */
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), up_hbox, NULL);
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), prov_panable, NULL);
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), proxy_hbox, NULL);
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), proxy_url_hbox, NULL);
+	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), savemsg_hbox, NULL);
 	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), done_label, NULL);
+
 
 	wizard = hildon_wizard_dialog_new(GTK_WINDOW(appdata->messageWindow), "Settings", GTK_NOTEBOOK(notebook));
 
@@ -1021,6 +1049,7 @@ int main( int argc, char* argv[] )
 			set_provider(appdata.gconf_client, appdata.settings.provider);
 			set_proxy(appdata.gconf_client, appdata.settings.use_proxy_script);
 			set_proxy_url(appdata.gconf_client, appdata.settings.proxy_url);
+			set_savemsg(appdata.gconf_client, appdata.settings.savemsg);
 		}
 		else
 		{
