@@ -1,3 +1,13 @@
+webtexter (0.7) unstable; urgency=low
+
+  * Can save sent messages to standard messages store to show in conversations app
+  * Increased some default logging, like curl verbose mode.
+  * Added switch to turn on extra logging
+  * 4898 Added support for websms.ru
+  * Fixed issue where cookie folder was given wrong permission on install
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 26 Dec 2009 16:02:00 -0600
+ 
 webtexter (0.6) unstable; urgency=low
 
   * 4890 Add a way to send to unknown betamax style sites
