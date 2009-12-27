@@ -34,6 +34,8 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
+
 	gchar * baseurl;
 	switch(settings->provider)
 	{

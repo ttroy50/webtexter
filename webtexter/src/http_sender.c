@@ -286,7 +286,9 @@ void http_send_curl(const char* url, http_sender* sender, http_method method,
 		curl_easy_setopt(handle, CURLOPT_COOKIEFILE, cookiefile);
 		curl_easy_setopt(handle, CURLOPT_VERBOSE, 1);
 		curl_easy_setopt(handle, CURLOPT_COOKIEJAR, cookiejar);
-		curl_easy_setopt(handle, CURLOPT_TIMEOUT, 15);
+
+		if(sender->timeout > 0)
+			curl_easy_setopt(handle, CURLOPT_TIMEOUT, sender->timeout);
 
 		if(post_str != NULL && method == HTTP_POST)
 		{

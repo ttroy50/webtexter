@@ -34,7 +34,7 @@ gboolean o2_login(AppSettings *settings, HTTP_Proxy *proxy)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *user_encoded = url_encode(settings->username);
 	gchar *pass_encoded = url_encode(settings->password);
 	gchar *url = g_strdup_printf("https://www.o2online.ie/amserver/UI/Login?org=o2ext&IDToken1=%s&IDToken2=%s",
@@ -67,10 +67,10 @@ gboolean o2_text_page(AppSettings *settings, HTTP_Proxy *proxy)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	http_sender *sender2;
 	sender2 = g_new0(http_sender, 1);
-
+	sender2->timeout = settings->curl_timeout;
 	gchar *domain_url = "http://messaging.o2online.ie/ssomanager.osp?APIID=AUTH-WEBSSO";
 	gchar *message_url = "http://messaging.o2online.ie/o2om_smscenter_new.osp?SID=73055_otfeuwos&REF=1226337573&MsgContentID=-1";
 
@@ -97,7 +97,7 @@ gboolean o2_send_message(AppSettings *settings, gchar *to, gchar *message, HTTP_
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *to_encoded = url_encode(to);
 	gchar *msg_encoded = url_encode(message);
 

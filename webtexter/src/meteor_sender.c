@@ -33,7 +33,7 @@ gboolean meteor_login(AppSettings *settings)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *user_encoded = url_encode(settings->username);
 	gchar *pass_encoded = url_encode(settings->password);
 	gchar *url = "https://www.mymeteor.ie/go/mymeteor-login-manager";
@@ -66,7 +66,7 @@ gboolean meteor_text_page(AppSettings *settings)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *url = "https://www.mymeteor.ie/go/freewebtext";
 	http_send_curl(url, sender, HTTP_GET, NULL, NULL);
 
@@ -88,7 +88,7 @@ gboolean meteor_send_message(AppSettings *settings, gchar *to, gchar *message)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *to_encoded = url_encode(to);
 	gchar *msg_encoded = url_encode(message);
 

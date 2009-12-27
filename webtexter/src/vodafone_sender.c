@@ -35,6 +35,7 @@ gboolean vodafone_login(AppSettings *settings, HTTP_Proxy *proxy)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 	gchar * user_encoded = url_encode(settings->username);
 	gchar * pass_encoded = url_encode(settings->password);
 	gchar *url = g_strdup_printf("https://www.vodafone.ie/myv/services/login/Login.shtml?username=%s&password=%s",
@@ -66,6 +67,7 @@ gchar* vodafone_text_page(AppSettings *settings, HTTP_Proxy *proxy)
 	gchar* apache_token;
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 	gchar *message_url = "https://www.vodafone.ie/myv/messaging/webtext/index.jsp";
 	http_send_curl(message_url, sender, HTTP_GET, NULL, proxy);
 	gchar* substring = g_strstr_len(sender->buffer->str, sender->buffer->len,
@@ -111,6 +113,7 @@ gboolean vodafone_send_message(AppSettings *settings,gchar* apache_token, gchar 
 	gint num = 160 - strlen(message);
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 	gchar *msg_encoded = url_encode(message);
 
 	gchar *url = "https://www.vodafone.ie/myv/messaging/webtext/Process.shtml";

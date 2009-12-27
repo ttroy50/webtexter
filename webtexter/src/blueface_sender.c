@@ -34,6 +34,7 @@ gint blueface_send_message(AppSettings *settings, gchar* to, gchar* message, HTT
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 
 	gint totalchar = 160 - strlen(message);
 	gchar *to_encoded = url_encode(to);

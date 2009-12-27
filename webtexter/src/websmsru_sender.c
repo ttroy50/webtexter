@@ -34,6 +34,7 @@ gint websmsru_send_message(AppSettings *settings, gchar* to, gchar* message, HTT
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 	gchar * baseurl = "https://websms.ru/http_in4.asp";
 
 	gchar *to_encoded = url_encode(to);
