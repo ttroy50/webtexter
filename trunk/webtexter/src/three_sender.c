@@ -33,7 +33,7 @@ gboolean three_login(AppSettings *settings)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *user_encoded = url_encode(settings->username);
 	gchar *pass_encoded = url_encode(settings->password);
 
@@ -67,7 +67,7 @@ gboolean three_text_page(AppSettings *settings)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *domain_url = "http://webtext.three.ie/send.jsp";
 	http_send_curl(domain_url, sender, HTTP_GET, NULL, NULL);
 
@@ -92,7 +92,7 @@ gboolean three_send_message(AppSettings *settings, gchar *to, gchar *message)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 	gchar *to_encoded = url_encode(to);
 	gchar *msg_encoded = url_encode(message);
 	gchar *url = g_strdup_printf(

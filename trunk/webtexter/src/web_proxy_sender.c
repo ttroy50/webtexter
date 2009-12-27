@@ -34,6 +34,7 @@ gint web_proxy_send_message(AppSettings *settings, gchar* to, gchar* message, HT
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
+	sender->timeout = settings->curl_timeout;
 	gchar * provider;
 	switch(settings->provider)
 	{
