@@ -62,7 +62,13 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 	settings->savemsg = gconf_client_get_bool(client,GCONF_SAVEMSG_KEY, NULL);
 	settings->emulator = gconf_client_get_bool(client,GCONF_EMULATOR_KEY, NULL);
 	settings->proxy_url = gconf_client_get_string(client,GCONF_PROXY_URL_KEY, NULL);
+	settings->curl_timeout = gconf_client_get_int(client,GCONF_CURL_TIME_KEY, NULL);
 
+
+	if(settings->curl_timeout <= 0)
+	{
+		settings->curl_timeout = 30;
+	}
 
 	if(settings->proxy_url == NULL)
 	{

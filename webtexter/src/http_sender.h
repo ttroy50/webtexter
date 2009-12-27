@@ -50,6 +50,7 @@ typedef struct
 {
 	/*gchar* data;*/
 	GString *buffer;
+	gint timeout;
 } http_sender;
 
 void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy);

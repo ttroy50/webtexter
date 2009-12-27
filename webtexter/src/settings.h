@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 #define GCONF_SAVEMSG_KEY "/apps/m_webtexter/savemsg"
 #define GCONF_EMULATOR_KEY "/apps/m_webtexter/emulator"
 #define GCONF_PROXY_URL_KEY "/apps/m_webtexter/proxy_url"
+#define GCONF_CURL_TIME_KEY "/apps/m_webtexter/curl_time"
 
 
 #define VODA_L "Vodafone Ireland"
@@ -81,6 +82,7 @@ typedef struct
 	gboolean emulator;
 	gboolean extra_logging;
 	gchar* proxy_url;
+	gint curl_timeout;
 
 } AppSettings;
 
