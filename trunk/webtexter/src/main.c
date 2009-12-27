@@ -459,6 +459,49 @@ some_page_func (GtkNotebook *nb,
 				appsettings->use_proxy_script = FALSE;
 			}
 
+
+			/*
+			 * Make the wizard more intuative by disabling or setting the context of pages based
+			 * on previous answers. This is currently only for the URL \ Proxy page
+			 */
+			GtkWidget *url_page;
+			url_page = gtk_notebook_get_nth_page (nb, 3);
+			GList *url_page_children = gtk_container_get_children(GTK_CONTAINER(url_page));
+
+			GtkWidget *url_label;
+			url_label = GTK_WIDGET(g_list_nth_data(url_page_children, 0));
+			HildonEntry *urlp_entry;
+			urlp_entry = HILDON_ENTRY(g_list_nth_data(url_page_children, 1));
+			GtkWidget *url_info_label;
+			url_info_label = GTK_WIDGET(g_list_nth_data(url_page_children, 2));
+
+			if(appsettings->provider == OTHER_BETAMAX)
+			{
+				gtk_label_set_text(GTK_LABEL(url_label), "Betamax URL");
+				gtk_label_set_text(GTK_LABEL(url_info_label),
+						"Please enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
+
+			}
+			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE)
+			{
+				gtk_label_set_text(GTK_LABEL(url_label), "Ignore Setting");
+				gtk_label_set_text(GTK_LABEL(url_info_label), "Please press next.");
+				gtk_editable_set_editable(GTK_EDITABLE(urlp_entry), FALSE);
+			}
+			else if(appsettings->use_proxy_script)
+			{
+				gtk_label_set_text(GTK_LABEL(url_label), "Cabbage Script Address (http://...)");
+				gtk_label_set_text(GTK_LABEL(url_info_label), "Enter the cabbage script address");
+			}
+			else
+			{
+				gtk_label_set_text(GTK_LABEL(url_label), "Ignore Setting");
+				gtk_editable_set_editable(GTK_EDITABLE(urlp_entry), FALSE);
+				gtk_label_set_text(GTK_LABEL(url_info_label), "Please press next.");
+			}
+
+
+
 			return TRUE;
 		}
 		case 3:
@@ -671,12 +714,12 @@ gint create_settings_wizard(AppData *appdata)
 	pass_label = gtk_label_new ("Password");
 	number_label = gtk_label_new("Phone Number");
 	prov_label = gtk_label_new ("Provider");
-	proxy_label = gtk_label_new ("Use Web Proxy");
+	proxy_label = gtk_label_new ("Use Cabbage Web Proxy");
 	proxy_url_label = gtk_label_new ("Web Proxy Address (http://...");
 	done_label = gtk_label_new(
 		"Your settings are now configured. \nEnjoy using webtexter");
 	proxy_info_label = gtk_label_new(
-		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface or Other Betamax");
+		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface, websms.ru or Other Betamax");
 	url_info_label = gtk_label_new(
 		"For a named provider:\nif web proxy selected enter script address\nif web proxy not selected enter anything\nFor Other Betamax providers:\nplease enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 	savemsg_label = gtk_label_new("Save sent messages:");
@@ -745,11 +788,11 @@ gint create_settings_wizard(AppData *appdata)
 
 
 	yes_proxy = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
-	gtk_button_set_label(GTK_BUTTON(yes_proxy), "Use Web Proxy");
+	gtk_button_set_label(GTK_BUTTON(yes_proxy), "Use Cabbage Web Proxy");
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(yes_proxy), FALSE);
 	hildon_gtk_widget_set_theme_size(yes_proxy, HILDON_SIZE_FINGER_HEIGHT);
 	no_proxy = hildon_gtk_radio_button_new_from_widget(HILDON_SIZE_AUTO , GTK_RADIO_BUTTON(yes_proxy));
-	gtk_button_set_label(GTK_BUTTON(no_proxy), "Don't use Web Proxy");
+	gtk_button_set_label(GTK_BUTTON(no_proxy), "Don't use Cabbage Web Proxy");
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(no_proxy), FALSE);
 	hildon_gtk_widget_set_theme_size(no_proxy, HILDON_SIZE_FINGER_HEIGHT);
 
