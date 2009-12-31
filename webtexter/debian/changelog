@@ -1,3 +1,11 @@
+webtexter (0.7.1) unstable; urgency=low
+
+  * Make curl timeout configurable
+  * Increase default curl timeout from 15s to 30s
+  * Make improvements to settings
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 31 Dec 2009 13:01:00 -0600
+ 
 webtexter (0.7) unstable; urgency=low
 
   * Can save sent messages to standard messages store to show in conversations app
