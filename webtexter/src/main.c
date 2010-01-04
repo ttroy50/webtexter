@@ -422,6 +422,7 @@ some_page_func (GtkNotebook *nb,
 			GtkRadioButton *lowratevoip_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, LOWRATEVOIP));
 			GtkRadioButton *otherbetamax_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, OTHER_BETAMAX));
 			GtkRadioButton *websmsru_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, WEBSMSRU));
+			GtkRadioButton *exetel_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, EXETEL));
 
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(o2_but)))
 				appsettings->provider = O2;
@@ -443,6 +444,8 @@ some_page_func (GtkNotebook *nb,
 				appsettings->provider = OTHER_BETAMAX;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(websmsru_but)))
 				appsettings->provider = WEBSMSRU;
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(exetel_but)))
+				appsettings->provider = EXETEL;
 
 			return TRUE;
 		}
@@ -482,7 +485,7 @@ some_page_func (GtkNotebook *nb,
 						"Please enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 
 			}
-			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE)
+			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE || appsettings->provider == EXETEL)
 			{
 				gtk_label_set_text(GTK_LABEL(url_label), "Ignore Setting");
 				gtk_label_set_text(GTK_LABEL(url_info_label), "Please press next.");
@@ -684,7 +687,7 @@ gint create_settings_wizard(AppData *appdata)
 	GtkWidget *proxy_info_label, *url_info_label, *savemsg_label, *savemsg_info_label;
 	GtkWidget *user_entry, *pass_entry, *number_entry, *proxy_url_entry;
 	GtkWidget *voda_button, *o2_button, *met_button, *three_button, *blueface_button, *voipcheap_button, *smsdiscount_button;
-	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button;
+	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button, *exetel_button;
 	GtkWidget *yes_proxy, *no_proxy;
 	GtkWidget *yes_savemsg, *no_savemsg;
 	GtkWidget *up_hbox, *prov_hbox, *proxy_hbox, *proxy_url_hbox, *savemsg_hbox;
@@ -709,6 +712,7 @@ gint create_settings_wizard(AppData *appdata)
 	char* lowrv = LOWRV_L;
 	char* otherbm = OTHER_BETA_L;
 	char* websmsru = WEBSMSRU_L;
+	char* exetel = EXETEL_L;
 
 	user_label = gtk_label_new ("Username");
 	pass_label = gtk_label_new ("Password");
@@ -785,6 +789,11 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_button_set_label(GTK_BUTTON(websmsru_button), websmsru);
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(websmsru_button), FALSE);
 	hildon_gtk_widget_set_theme_size(websmsru_button, HILDON_SIZE_FINGER_HEIGHT);
+
+	exetel_button = hildon_gtk_radio_button_new_from_widget(HILDON_SIZE_AUTO , GTK_RADIO_BUTTON(websmsru_button));
+	gtk_button_set_label(GTK_BUTTON(exetel_button), exetel);
+	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(exetel_button), FALSE);
+	hildon_gtk_widget_set_theme_size(exetel_button, HILDON_SIZE_FINGER_HEIGHT);
 
 
 	yes_proxy = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
@@ -876,6 +885,11 @@ gint create_settings_wizard(AppData *appdata)
 				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(websmsru_button), TRUE);
 				break;
 			}
+			case EXETEL:
+			{
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(exetel_button), TRUE);
+				break;
+			}
 		}
 	}
 	else
@@ -918,6 +932,7 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_box_pack_start (GTK_BOX (prov_hbox), lowratevoip_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), other_betamax_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), websmsru_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (prov_hbox), exetel_button, FALSE, FALSE, 0);
 
 	hildon_pannable_area_add_with_viewport (
 	    HILDON_PANNABLE_AREA (prov_panable), prov_hbox);

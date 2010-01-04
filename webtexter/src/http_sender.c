@@ -34,6 +34,7 @@
 #include "blueface_sender.h"
 #include "web_proxy_sender.h"
 #include "betamax_sender.h"
+#include "exetel_sender.h"
 #include "settings.h"
 #include "network_utilities.h"
 #include "message_logger.h"
@@ -107,7 +108,8 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 {
 
-	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX && settings->provider != WEBSMSRU))
+	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX &&
+			settings->provider != WEBSMSRU && settings->provider != EXETEL))
 	{
 		return web_proxy_send_message(settings, to, msg, proxy);
 	}
@@ -240,6 +242,10 @@ gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 	else if(settings->provider == WEBSMSRU)
 	{
 		return websmsru_send_message(settings, to, msg, proxy);
+	}
+	else if(settings->provider == EXETEL)
+	{
+		return exetel_send_message(settings, to, msg, proxy);
 	}
 	else
 	{
