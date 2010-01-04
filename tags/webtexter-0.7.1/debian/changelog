@@ -1,0 +1,66 @@
+webtexter (0.7.1) unstable; urgency=low
+
+  * Make curl timeout configurable
+  * Increase default curl timeout from 15s to 30s
+  * Make improvements to settings
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 31 Dec 2009 13:01:00 -0600
+ 
+webtexter (0.7) unstable; urgency=low
+
+  * Can save sent messages to standard messages store to show in conversations app
+  * Increased some default logging, like curl verbose mode.
+  * Added switch to turn on extra logging
+  * 4898 Added support for websms.ru
+  * Fixed issue where cookie folder was given wrong permission on install
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 26 Dec 2009 16:02:00 -0600
+ 
+webtexter (0.6) unstable; urgency=low
+
+  * 4890 Add a way to send to unknown betamax style sites
+  * 4891 Sending directly to betamax sites shows not sent even though the message is sent correctly	
+  * 4903 Crash when sending
+  * Updated description
+  * Added help information to settings wizard to explain some settings
+
+ -- Thom Troy <ttroy50@gmail.com>  Wed, 16 Dec 2009 23:09:00 -0600
+ 
+webtexter (0.5) unstable; urgency=low
+
+  * 4875 optify package
+  * 4878 To input should default to numeric input
+  * 4879 Remove gconf settings on uninstall
+  * 4880 If the settings wizard is exited prematurely it can cause a crash or instable behaviour in some instances 
+  * Updated description in control file and about box
+
+ -- Thom Troy <ttroy50@gmail.com>  Sun, 06 Dec 2009 15:06:00 -0600
+
+webtexter (0.4) unstable; urgency=low
+
+  * Updated debian control file to include all build-depends libraries
+  * Updated debian control to include XBSC-Bugtracker
+
+ -- Thom Troy <ttroy50@gmail.com>  Sun, 06 Dec 2009 15:06:00 -0600
+ 
+webtexter (0.3) unstable; urgency=low
+
+  * Changed service to org.maemo.webtexter
+  * Added support for VoIP providers blueface, voipcheap, smsdiscount, lowratevoip
+  * Added orientation support. This is turned off by default
+  * Added number swithces to turn on \ off features
+  * Added support for changing web proxy address
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 05 Dec 2009 18:46:00 -0600
+
+webtexter (0.2) unstable; urgency=low
+
+  * Updated to include new icon and take away some debugging features
+
+ -- Thom Troy <ttroy50@gmail.com>  Thu, 15 Nov 2009 17:22:00 -0600
+
+webtexter (0.1) unstable; urgency=low
+
+  * Initial version. Allows sending directly through operator and through cabbage web scripts
+
+ -- Thom Troy <ttroy50@gmail.com>  Thu, 24 Oct 2009 17:22:00 -0600
