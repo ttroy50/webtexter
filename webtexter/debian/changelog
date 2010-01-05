@@ -1,5 +1,11 @@
 webtexter (0.7.1) unstable; urgency=low
 
+  * Added support for exetel
+
+ -- Thom Troy <ttroy50@gmail.com>  Tue, 5 Jan 2010 19:57:00 -0600
+ 
+webtexter (0.7.1) unstable; urgency=low
+
   * Make curl timeout configurable
   * Increase default curl timeout from 15s to 30s
   * Make improvements to settings
