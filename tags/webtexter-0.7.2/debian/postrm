@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -r /opt/maemo/usr/share/webtexter/
+
+gconftool --recursive-unset /apps/m_webtexter
+ 
+exit 0
