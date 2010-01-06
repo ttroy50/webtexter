@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.7.3
+Type=Application
+Name=WebTexter
+Exec=/usr/bin/webtexter
+Icon=webtexter
+X-Window-Icon=webtexter
+X-Window-Icon-Dimmed=webtexter
+X-Osso-Service=org.maemo.webtexter
+X-Osso-Type=application/x-executable
+X-HildonDesk-ShowInToolbar=true
