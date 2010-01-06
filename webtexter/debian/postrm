@@ -2,6 +2,8 @@
 
 rm -r /opt/maemo/usr/share/webtexter/
 
-gconftool --recursive-unset /apps/m_webtexter
+case "$1" in remove|purge|abort-install|disappear)
+	gconftool --recursive-unset /apps/m_webtexter
+esac
  
 exit 0
