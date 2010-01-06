@@ -25,7 +25,7 @@ gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
-
+	sender->timeout = settings->curl_timeout;
 
 	gchar *to_encoded = url_encode(to);
 	gchar *msg_encoded = url_encode(message);
@@ -43,7 +43,14 @@ gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_
 
 	http_send_curl(url, sender, HTTP_POST, post, proxy);
 
-	if(!(g_str_has_prefix (sender->buffer->str,"1")))
+	if(g_str_has_prefix (sender->buffer->str,"1"))
+	{
+		g_free(url);
+		g_free(post);
+		g_string_free(sender->buffer, TRUE);
+		return SUCCESS;
+	}
+	else
 	{
 		g_debug("Message Not sent to exetel.");
 		g_free(url);
@@ -51,13 +58,7 @@ gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_
 		g_string_free(sender->buffer, TRUE);
 		return ERROR_SEND;
 	}
-	else
-	{
-		g_free(url);
-		g_free(post);
-		g_string_free(sender->buffer, TRUE);
-		return SUCCESS;
-	}
 
 	return ERROR_OTHER;
+
 }
