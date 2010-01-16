@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.maemo.webtexter
+Exec=/usr/bin/webtexter
