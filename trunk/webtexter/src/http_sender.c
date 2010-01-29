@@ -105,9 +105,21 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 
 }
 
+gchar *filter_to(gchar *str) {
+  gchar *pstr = str, *buf = malloc(strlen(str)), *pbuf = buf;
+  while (*pstr) {
+    if (g_ascii_isdigit(*pstr) || *pstr == '+')
+      *pbuf++ = *pstr;
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+
 gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 {
 
+	to = filter_to(to);
 	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX &&
 			settings->provider != WEBSMSRU && settings->provider != EXETEL))
 	{
