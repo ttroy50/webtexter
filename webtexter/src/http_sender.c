@@ -108,7 +108,7 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 gchar *filter_to(gchar *str) {
   gchar *pstr = str, *buf = malloc(strlen(str)), *pbuf = buf;
   while (*pstr) {
-    if (g_ascii_isdigit(*pstr) || *pstr == '+')
+    if (g_ascii_isdigit(*pstr) || *pstr == '+' || *pstr == ',')
       *pbuf++ = *pstr;
     pstr++;
   }
