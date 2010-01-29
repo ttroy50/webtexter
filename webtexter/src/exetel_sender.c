@@ -21,12 +21,13 @@
 #include "http_sender.h"
 #include "string.h"
 
+
+
 gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_Proxy *proxy)
 {
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
 	sender->timeout = settings->curl_timeout;
-
 	gchar *to_encoded = url_encode(to);
 	gchar *msg_encoded = url_encode(message);
 	gchar *user_encoded = url_encode(settings->username);
