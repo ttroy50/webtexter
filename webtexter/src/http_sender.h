@@ -54,6 +54,7 @@ typedef struct
 } http_sender;
 
 void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy);
+gchar *filter_to(gchar *str);
 gint send_msg(AppSettings *appsettings, char* to, char* msg, HTTP_Proxy *proxy);
 void http_send_curl(const char* url, http_sender* sender, http_method method,
 		gchar* post_str, HTTP_Proxy *proxy);
