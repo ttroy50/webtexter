@@ -21,6 +21,16 @@
 #include "http_sender.h"
 #include "string.h"
 
+gchar *filter_to_exetel(gchar *str) {
+  gchar *pstr = str, *buf = malloc(strlen(str)), *pbuf = buf;
+  while (*pstr) {
+    if (g_ascii_isdigit(*pstr))
+      *pbuf++ = *pstr;
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
 
 
 gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_Proxy *proxy)
@@ -28,7 +38,7 @@ gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_
 	http_sender *sender;
 	sender = g_new0(http_sender, 1);
 	sender->timeout = settings->curl_timeout;
-	gchar *to_encoded = url_encode(to);
+	gchar *to_encoded = url_encode(filter_to_exetel(to));
 	gchar *msg_encoded = url_encode(message);
 	gchar *user_encoded = url_encode(settings->username);
 	gchar *pass_encoded = url_encode(settings->password);
