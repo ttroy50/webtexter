@@ -27,6 +27,7 @@
 
 G_BEGIN_DECLS
 
+gchar *filter_to_exetel(gchar *str);
 gint exetel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_Proxy *proxy);
 
 

@@ -117,6 +117,10 @@ gint get_max_msg_size(AppSettings *settings)
 	{
 		return 160;
 	}
+	else if(settings->provider == EXETEL)
+	{
+		return 612;
+	}
 	else
 	{
 		return 160;
