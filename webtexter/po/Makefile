@@ -19,7 +19,7 @@
 
 GETTEXT_PACKAGE = webtexter
 PACKAGE = webtexter
-VERSION = 0.7.5
+VERSION = 0.7.6
 
 SHELL = /bin/sh
 
