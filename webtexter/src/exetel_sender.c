@@ -24,7 +24,7 @@
 gchar *filter_to_exetel(gchar *str) {
   gchar *pstr = str, *buf = malloc(strlen(str)), *pbuf = buf;
   while (*pstr) {
-    if (g_ascii_isdigit(*pstr))
+    if (g_ascii_isdigit(*pstr) || *pstr == ',')
       *pbuf++ = *pstr;
     pstr++;
   }
