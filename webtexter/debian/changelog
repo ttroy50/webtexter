@@ -1,3 +1,11 @@
+webtexter (0.7.6) unstable; urgency=low
+
+  * Fixed bug 8677
+  * Added TO filter to filter out non numberical chars except + and ,
+  * Added correct number of characters for exetel
+
+ -- Thom Troy <ttroy50@gmail.com>  Sat, 01 Feb 2010 15:04:00 -0600
+ 
 webtexter (0.7.5) unstable; urgency=low
 
   * Updated bug tracker to bugs.maemo.org
