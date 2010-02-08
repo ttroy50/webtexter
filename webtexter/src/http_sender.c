@@ -60,6 +60,7 @@ void prepare_to_send(AppData *appdata, HTTP_Proxy *proxy)
 	gchar* to;
 	to = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(appdata->toBuffer), &tostart,
 											&toend, FALSE);
+	to = filter_to(to);
 	gchar* msg;
 	msg = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(appdata->msgBuffer), &msgstart,
 											&msgend, FALSE);
@@ -119,7 +120,7 @@ gchar *filter_to(gchar *str) {
 gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 {
 
-	to = filter_to(to);
+
 	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX &&
 			settings->provider != WEBSMSRU && settings->provider != EXETEL))
 	{
