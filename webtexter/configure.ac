@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(webtexter,0.7.6)
+AC_INIT(webtexter,0.7.7)
 AM_CONFIG_HEADER(config.h) 
 
 AM_INIT_AUTOMAKE([1.7.9])
