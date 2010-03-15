@@ -22,7 +22,7 @@
 #include "string.h"
 
 gchar *filter_to_exetel(gchar *str) {
-  gchar *pstr = str, *buf = malloc(strlen(str)), *pbuf = buf;
+  gchar *pstr = str, *buf = malloc(strlen(str)+1), *pbuf = buf;
   while (*pstr) {
     if (g_ascii_isdigit(*pstr) || *pstr == ',')
       *pbuf++ = *pstr;
