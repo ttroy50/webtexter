@@ -115,6 +115,12 @@ gboolean o2_send_message(AppSettings *settings, gchar *to, gchar *message, HTTP_
 		g_string_free(sender->buffer, TRUE);
 		return TRUE;
 	}
+	else if((g_strstr_len(sender->buffer->str, sender->buffer->len, "isSuccess : true")) != NULL)
+	{
+		g_free(url);
+		g_string_free(sender->buffer, TRUE);
+		return TRUE;
+	}
 	else
 	{
 		g_debug("O2 Message Not sent\n");
