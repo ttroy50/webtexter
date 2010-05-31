@@ -1,3 +1,10 @@
+webtexter (0.7.9) unstable; urgency=low
+
+  * fixed wrong return code when sending directly through o2
+  * fixed wrong return code when sending through websms.ru
+
+ -- Thom Troy <ttroy50@gmail.com>  Mon, 31 May 2010 21:14:00 -0600
+ 
 webtexter (0.7.8) unstable; urgency=low
 
   * Fixed potential crash with the To filter

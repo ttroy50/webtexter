@@ -47,7 +47,7 @@ G_BEGIN_DECLS
  * Please do not modify "APP_NAME" (or other defines) to different name
  */
 #define APP_NAME "webtexter"
-#define APP_VER "0.7.8"
+#define APP_VER "0.7.9"
 #define APP_SERVICE "org.maemo.webtexter"
 #define APP_METHOD "/org/maemo/webtexter"
 /* end defines */
