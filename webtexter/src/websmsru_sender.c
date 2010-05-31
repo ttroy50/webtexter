@@ -62,7 +62,21 @@ gint websmsru_send_message(AppSettings *settings, gchar* to, gchar* message, HTT
 	if(settings->extra_logging)
 		g_debug("returned html is %s", sender->buffer->str);
 
-	if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "Result = OK")) != NULL))
+	if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "Result=ok")) != NULL))
+	{
+		g_debug("Message sent to websms.ru");
+		g_free(url);
+		g_string_free(sender->buffer, TRUE);
+		return SUCCESS;
+	}
+	else if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "Result = ok")) != NULL))
+	{
+		g_debug("Message sent to websms.ru");
+		g_free(url);
+		g_string_free(sender->buffer, TRUE);
+		return SUCCESS;
+	}
+	else if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "Result=OK")) != NULL))
 	{
 		g_debug("Message sent to websms.ru");
 		g_free(url);
