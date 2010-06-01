@@ -117,6 +117,14 @@ gint get_max_msg_size(AppSettings *settings)
 	{
 		return 160;
 	}
+	else if(settings->provider == O2)
+	{
+		return 1000;
+	}
+	else if(settings->provider == METEOR)
+	{
+		return 480;
+	}
 	else if(settings->provider == EXETEL)
 	{
 		return 612;
