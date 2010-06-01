@@ -12,4 +12,5 @@ EXTRA_DIST = \
 	blueface_sender.h blueface_sender.c \
 	betamax_sender.h betamax_sender.h \
 	websmsru_sender.h websmsru_sender.c \
-	exetel_sender.h exetel_sender.c
+	exetel_sender.h exetel_sender.c \
+	he-about-dialog.h he-about-dialog.c

@@ -46,6 +46,7 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include "localisation.h"
+#include "he-about-dialog.h"
 
 
 /* Orientation functions modified from those in conboy and mbarcode.*/
@@ -552,19 +553,16 @@ some_page_func (GtkNotebook *nb,
 
 void aboutButton_clicked (GtkButton* button, AppData *appdata)
 {
-	/*
-	 * TODO Should add contact info
-	 */
-	GtkWidget *about;
-	about = gtk_about_dialog_new();
+	he_about_dialog_present(GTK_WINDOW(appdata->messageWindow),
+	                        APP_NAME,
+	                        NULL,
+	                        APP_VER,
+	                        "Send web texts to Irish Mobile Operators \nand selected VoIP operators.",
+	                        "(c) 2010 Thom Troy",
+	                        "http://webtexter.garage.maemo.org",
+	                        "https://bugs.maemo.org/enter_bug.cgi?product=Extended%20Call%20Log",
+	                        "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3S5DWH4C95UG8");
 
-	gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG(about), APP_NAME);
-	gtk_about_dialog_set_version (GTK_ABOUT_DIALOG(about), APP_VER);
-	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-			"Send web texts to Irish Mobile Operators and selected VoIP operators. VoIP operators currently supported are Blueface, Voipcheap, SMSdiscount and lowratevoip. It is possible to send directly to the operator or through web scripts compatible with cabbage (http://cabbagetexter.com)");
-
-	gtk_dialog_run(GTK_DIALOG(about));
-	gtk_widget_destroy(GTK_WIDGET(about));
 
 }
 
