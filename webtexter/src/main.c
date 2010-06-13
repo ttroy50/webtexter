@@ -560,7 +560,7 @@ void aboutButton_clicked (GtkButton* button, AppData *appdata)
 	                        "Send web texts to Irish Mobile Operators \nand selected VoIP operators.",
 	                        "(c) 2010 Thom Troy",
 	                        "http://webtexter.garage.maemo.org",
-	                        "https://bugs.maemo.org/enter_bug.cgi?product=Extended%20Call%20Log",
+	                        "https://bugs.maemo.org/enter_bug.cgi?product=webtexter",
 	                        "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8DVWR56KA5F48");
 
 
