@@ -1,6 +1,6 @@
 /* This file is part of webtexter
  *
- * Copyright (C) 2009 Thom Troy
+ * Copyright (C) 2011 Thom Troy
  *
  * WebTexter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
@@ -424,6 +424,8 @@ some_page_func (GtkNotebook *nb,
 			GtkRadioButton *otherbetamax_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, OTHER_BETAMAX));
 			GtkRadioButton *websmsru_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, WEBSMSRU));
 			GtkRadioButton *exetel_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, EXETEL));
+			GtkRadioButton *pennytel_but = GTK_RADIO_BUTTON(g_list_nth_data(pan, PENNYTEL));
+
 
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(o2_but)))
 				appsettings->provider = O2;
@@ -447,6 +449,8 @@ some_page_func (GtkNotebook *nb,
 				appsettings->provider = WEBSMSRU;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(exetel_but)))
 				appsettings->provider = EXETEL;
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pennytel_but)))
+							appsettings->provider = PENNYTEL;
 
 			return TRUE;
 		}
@@ -486,7 +490,8 @@ some_page_func (GtkNotebook *nb,
 						"Please enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 
 			}
-			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE || appsettings->provider == EXETEL)
+			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE || appsettings->provider == EXETEL
+					|| appsettings->provider == PENNYTEL)
 			{
 				gtk_label_set_text(GTK_LABEL(url_label), "Ignore Setting");
 				gtk_label_set_text(GTK_LABEL(url_info_label), "Please press next.");
@@ -685,7 +690,7 @@ gint create_settings_wizard(AppData *appdata)
 	GtkWidget *proxy_info_label, *url_info_label, *savemsg_label, *savemsg_info_label;
 	GtkWidget *user_entry, *pass_entry, *number_entry, *proxy_url_entry;
 	GtkWidget *voda_button, *o2_button, *met_button, *three_button, *blueface_button, *voipcheap_button, *smsdiscount_button;
-	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button, *exetel_button;
+	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button, *exetel_button, *pennytel_button;
 	GtkWidget *yes_proxy, *no_proxy;
 	GtkWidget *yes_savemsg, *no_savemsg;
 	GtkWidget *up_hbox, *prov_hbox, *proxy_hbox, *proxy_url_hbox, *savemsg_hbox;
@@ -711,6 +716,7 @@ gint create_settings_wizard(AppData *appdata)
 	char* otherbm = OTHER_BETA_L;
 	char* websmsru = WEBSMSRU_L;
 	char* exetel = EXETEL_L;
+	char* pennytel = PENNYTEL_L;
 
 	user_label = gtk_label_new ("Username");
 	pass_label = gtk_label_new ("Password");
@@ -721,7 +727,7 @@ gint create_settings_wizard(AppData *appdata)
 	done_label = gtk_label_new(
 		"Your settings are now configured. \nEnjoy using webtexter");
 	proxy_info_label = gtk_label_new(
-		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface, websms.ru or Other Betamax");
+		"Send through the cabbage style web scripts.\nNote: These scripts are mainly aimed at Irish users.\nNever used for Blueface, websms.ru, Exetel \nPennyTel or Other Betamax");
 	url_info_label = gtk_label_new(
 		"For a named provider:\nif web proxy selected enter script address\nif web proxy not selected enter anything\nFor Other Betamax providers:\nplease enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 	savemsg_label = gtk_label_new("Save sent messages:");
@@ -793,6 +799,10 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(exetel_button), FALSE);
 	hildon_gtk_widget_set_theme_size(exetel_button, HILDON_SIZE_FINGER_HEIGHT);
 
+	pennytel_button = hildon_gtk_radio_button_new_from_widget(HILDON_SIZE_AUTO , GTK_RADIO_BUTTON(exetel_button));
+	gtk_button_set_label(GTK_BUTTON(pennytel_button), pennytel);
+	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(pennytel_button), FALSE);
+	hildon_gtk_widget_set_theme_size(pennytel_button, HILDON_SIZE_FINGER_HEIGHT);
 
 	yes_proxy = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
 	gtk_button_set_label(GTK_BUTTON(yes_proxy), "Use Cabbage Web Proxy");
@@ -888,6 +898,11 @@ gint create_settings_wizard(AppData *appdata)
 				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(exetel_button), TRUE);
 				break;
 			}
+			case PENNYTEL:
+			{
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(pennytel_button), TRUE);
+				break;
+			}
 		}
 	}
 	else
@@ -931,6 +946,7 @@ gint create_settings_wizard(AppData *appdata)
 	gtk_box_pack_start (GTK_BOX (prov_hbox), other_betamax_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), websmsru_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), exetel_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (prov_hbox), pennytel_button, FALSE, FALSE, 0);
 
 	hildon_pannable_area_add_with_viewport (
 	    HILDON_PANNABLE_AREA (prov_panable), prov_hbox);
