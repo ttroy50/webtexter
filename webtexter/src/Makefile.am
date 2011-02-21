@@ -13,4 +13,5 @@ EXTRA_DIST = \
 	betamax_sender.h betamax_sender.h \
 	websmsru_sender.h websmsru_sender.c \
 	exetel_sender.h exetel_sender.c \
+	pennytel_sender.h pennytel_sender.c \
 	he-about-dialog.h he-about-dialog.c

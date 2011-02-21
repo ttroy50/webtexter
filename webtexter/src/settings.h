@@ -1,6 +1,6 @@
 /* This file is part of webtexter
  *
- * Copyright (C) 2009 Thom Troy
+ * Copyright (C) 2011 Thom Troy
  *
  * WebTexter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
@@ -56,6 +56,7 @@ G_BEGIN_DECLS
 #define OTHER_BETA_L "Other Betamax"
 #define WEBSMSRU_L "WebSMS.ru"
 #define EXETEL_L "Exetel"
+#define PENNYTEL_L "PennyTel"
 
 typedef enum {
   O2 = 1,
@@ -68,7 +69,8 @@ typedef enum {
   LOWRATEVOIP = 8,
   OTHER_BETAMAX = 9,
   WEBSMSRU = 10,
-  EXETEL = 11
+  EXETEL = 11,
+  PENNYTEL = 12
 
 } Providers;
 

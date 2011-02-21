@@ -1,6 +1,6 @@
 /* This file is part of webtexter
  *
- * Copyright (C) 2009 Thom Troy
+ * Copyright (C) 2011 Thom Troy
  *
  * WebTexter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
@@ -35,6 +35,7 @@
 #include "web_proxy_sender.h"
 #include "betamax_sender.h"
 #include "exetel_sender.h"
+#include "pennytel_sender.h"
 #include "settings.h"
 #include "network_utilities.h"
 #include "message_logger.h"
@@ -122,7 +123,7 @@ gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 
 
 	if(settings->use_proxy_script && (settings->provider != BLUEFACE && settings->provider != OTHER_BETAMAX &&
-			settings->provider != WEBSMSRU && settings->provider != EXETEL))
+			settings->provider != WEBSMSRU && settings->provider != EXETEL && settings->provider != PENNYTEL))
 	{
 		return web_proxy_send_message(settings, to, msg, proxy);
 	}
@@ -259,6 +260,10 @@ gint send_msg(AppSettings *settings, char* to, char* msg, HTTP_Proxy *proxy)
 	else if(settings->provider == EXETEL)
 	{
 		return exetel_send_message(settings, to, msg, proxy);
+	}
+	else if(settings->provider == PENNYTEL)
+	{
+		return pennytel_send_message(settings, to, msg, proxy);
 	}
 	else
 	{
@@ -403,4 +408,3 @@ char *url_decode(char *str) {
   *pbuf = '\0';
   return buf;
 }
-
