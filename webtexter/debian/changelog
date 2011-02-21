@@ -2,6 +2,7 @@ webtexter (0.8) unstable; urgency=low
 
   * Added provider pennytel provided by Jonathan Schultz
   * Changed about box to he-about
+  * Updated message size for O2 and Meteor
 
  -- Thom Troy <ttroy50@gmail.com>  Mon, 21 Feb 2011 21:50:00 -0600
  
