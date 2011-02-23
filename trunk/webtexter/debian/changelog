@@ -1,3 +1,9 @@
+webtexter (0.8.1) unstable; urgency=low
+
+  * fix issue with encoding on pennytel
+
+ -- Thom Troy <ttroy50@gmail.com>  Mon, 23 Feb 2011 21:13:00 -0600
+ 
 webtexter (0.8) unstable; urgency=low
 
   * Added provider pennytel provided by Jonathan Schultz
