@@ -60,6 +60,7 @@ void http_send_curl(const char* url, http_sender* sender, http_method method,
 		gchar* post_str, HTTP_Proxy *proxy);
 void testSender();
 char *url_encode(char *str);
+char *xml_encode(char *str);
 
 
 
