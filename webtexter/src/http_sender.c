@@ -408,3 +408,21 @@ char *url_decode(char *str) {
   *pbuf = '\0';
   return buf;
 }
+
+ 
+/* Returns a url-encoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *xml_encode(char *str) {
+  char *pstr = str, *buf = malloc(strlen(str) * 4 + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '<')
+      *pbuf++ = '&', *pbuf++ = 'l', *pbuf++ = 't', *pbuf++ = ';';
+    else if (*pstr == '>')
+      *pbuf++ = '&', *pbuf++ = 'g', *pbuf++ = 't', *pbuf++ = ';';
+    else
+      *pbuf++ = *pstr;
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}

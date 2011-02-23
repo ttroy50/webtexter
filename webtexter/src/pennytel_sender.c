@@ -38,10 +38,10 @@ gint pennytel_send_message(AppSettings *settings, gchar* to, gchar* message, HTT
 	CURLcode res;
 	struct curl_slist *chunk = NULL;
 
-	gchar *to_encoded = url_encode(to);
-	gchar *msg_encoded = url_encode(message);
-	gchar *user_encoded = url_encode(settings->username);
-	gchar *pass_encoded = url_encode(settings->password);
+	gchar *to_encoded = xml_encode(to);
+	gchar *msg_encoded = xml_encode(message);
+	gchar *user_encoded = xml_encode(settings->username);
+	gchar *pass_encoded = xml_encode(settings->password);
 
 	gchar *post = g_strdup_printf("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <SOAP-ENV:Header/> "
 				      "<SOAP-ENV:Body>  <sendSMS xmlns=\"\">  <ID xsi:type=\"xsd:string\">%s</ID><Password xsi:type=\"xsd:string\">%s</Password><type xsi:type=\"xsd:int\">1</type><To xsi:type=\"xsd:string\">%s</To><Message xsi:type=\"xsd:string\">%s</Message><Date xsi:type=\"xsd:datetime\">1970-01-01T00:00:00</Date></sendSMS> </SOAP-ENV:Body></SOAP-ENV:Envelope>",
