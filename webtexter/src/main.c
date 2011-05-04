@@ -37,6 +37,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
 #include <gtk/gtkbutton.h>
+#include <gtk/gtkcombobox.h>
 #include <mce/dbus-names.h>
 #include <mce/mode-names.h>
 #include <glib.h>
@@ -47,7 +48,7 @@
 #include <curl/easy.h>
 #include "localisation.h"
 #include "he-about-dialog.h"
-
+#include <stdio.h>
 
 /* Orientation functions modified from those in conboy and mbarcode.*/
 
@@ -304,37 +305,89 @@ static void toButton_clicked (GtkButton* button, AppData *appdata)
 void settingsButton_clicked(GtkButton* button, AppData *appdata)
 {
 	gint wizard_response = create_settings_wizard(appdata);
-
+	
 	if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), TRUE);
 		g_debug("settings response is good in settingsButton_Clicked \n");
 		/*
 		* Should be moved to response good if statment above
 		 */
-		set_username(appdata->gconf_client, appdata->settings.username);
-		set_password(appdata->gconf_client, appdata->settings.password);
-		set_number(appdata->gconf_client, appdata->settings.number);
-		set_provider(appdata->gconf_client, appdata->settings.provider);
-		set_proxy(appdata->gconf_client, appdata->settings.use_proxy_script);
-		set_proxy_url(appdata->gconf_client, appdata->settings.proxy_url);
-		set_savemsg(appdata->gconf_client, appdata->settings.savemsg);
+		account = gtk_combo_box_get_active (GTK_COMBO_BOX(appdata->accountBox));
+		if (account < 0) {	/*  No accounts defined  */
+			account = 0;
+			set_settings(appdata->gconf_client, account, &appdata->settings);
+			gtk_combo_box_append_text (GTK_COMBO_BOX(appdata->accountBox), appdata->settings.accountname);
+		}
+		else {
+			set_settings(appdata->gconf_client, account, &appdata->settings);
+			gtk_combo_box_insert_text (GTK_COMBO_BOX(appdata->accountBox), account, appdata->settings.accountname);
+			gtk_combo_box_remove_text (GTK_COMBO_BOX(appdata->accountBox), account+1);
+		}
+		gtk_combo_box_set_active (GTK_COMBO_BOX(appdata->accountBox), account);
 	}
-	else
-	{
-		/*
-		 * The finish button wasn't pressed.
-		 * TODO Do something here to check settings and possibly reshow the wizard and a banner showing that the user has to click
-		 * finish
-		 */
-		gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), FALSE);
-		GtkWidget *banner;
-		banner = hildon_banner_show_information(GTK_WIDGET(appdata->messageWindow), NULL,
-					"Please re enter your settings as there appears to be a problem. When running please continue to the end and press finish");
-		hildon_banner_set_timeout(HILDON_BANNER(banner), 5000);
-		g_print("settingsButton_clicked wizard response is : %d \n", wizard_response);
-	}
+}
 
+void deleteButton_clicked(GtkButton* button, AppData *appdata)
+{
+	GtkWidget *note; 
+	int i, account;
+	const gchar confirm_text[32];
+	
+	snprintf (confirm_text, 32, "Delete account %s?", appdata->settings.accountname);
+	
+	note = hildon_note_new_confirmation (GTK_WINDOW(appdata->messageWindow), confirm_text);
+	i = gtk_dialog_run (GTK_DIALOG (note));
+	gtk_widget_destroy (GTK_WIDGET (note));
+
+	if (i == GTK_RESPONSE_OK) {
+		account = gtk_combo_box_get_active (GTK_COMBO_BOX(appdata->accountBox));
+		i = account;
+		while (get_settings(appdata->gconf_client, i+1, &appdata->settings)) {
+			set_settings(appdata->gconf_client, i, &appdata->settings);
+			i++;
+		}
+		set_settings(appdata->gconf_client, i, NULL);
+
+		g_debug("delete response is YES in deleteButton_Clicked %u \n", i);
+		
+		gtk_combo_box_remove_text (GTK_COMBO_BOX(appdata->accountBox), account);
+		if (account >= i)
+			account = 0;
+		gtk_combo_box_set_active (GTK_COMBO_BOX(appdata->accountBox), account);
+
+		if (i == 0)
+			gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), FALSE);
+
+		g_debug("settings response is good in deleteButton_Clicked \n");
+	}
+}
+
+void newButton_clicked(GtkButton* button, AppData *appdata)
+{
+	gint wizard_response;
+	int account;
+	
+	/*  Find last account number  */
+	account = 0;
+	while (get_settings(appdata->gconf_client, account, &appdata->settings))
+		account++;
+	
+	wizard_response = create_settings_wizard(appdata);
+	
+	if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
+	{
+		gtk_widget_set_sensitive(GTK_WIDGET(appdata->sendButton), TRUE);
+		g_debug("settings response is good in newButton_Clicked %u \n", account);
+
+		set_settings(appdata->gconf_client, account, &appdata->settings);
+		
+		gtk_combo_box_append_text (GTK_COMBO_BOX(appdata->accountBox), appdata->settings.accountname);
+		gtk_combo_box_set_active (GTK_COMBO_BOX(appdata->accountBox), account);
+	}
+	else {
+		account = gtk_combo_box_get_active (GTK_COMBO_BOX(appdata->accountBox));
+		get_settings(appdata->gconf_client, account, &appdata->settings);
+	}
 }
 
 void wizard_response(GtkDialog *dialog,
@@ -361,7 +414,7 @@ on_page_switch (GtkNotebook *notebook,
 static gboolean
 some_page_func (GtkNotebook *nb,
                 gint current,
-                AppSettings *appsettings)
+                AppData *appdata)
 {
 	GtkWidget *entry;
 	entry = gtk_notebook_get_nth_page (nb, current);
@@ -371,31 +424,29 @@ some_page_func (GtkNotebook *nb,
 	switch (current) {
 		case 0:
 		{
-			HildonEntry *user;
-			user= HILDON_ENTRY(g_list_nth_data(children, 1));
-			HildonEntry *pass;
-			pass= HILDON_ENTRY(g_list_nth_data(children, 3));
-			HildonEntry *number;
-			number = HILDON_ENTRY(g_list_nth_data(children, 5));
-
-			const gchar *users = hildon_entry_get_text (HILDON_ENTRY(user));
-			const gchar *passs = hildon_entry_get_text (HILDON_ENTRY(pass));
-			const gchar *numbers = hildon_entry_get_text (HILDON_ENTRY(number));
+			const gchar *accounts = hildon_entry_get_text (HILDON_ENTRY(appdata->account_entry));
+			const gchar *users = hildon_entry_get_text (HILDON_ENTRY(appdata->user_entry));
+			const gchar *passs = hildon_entry_get_text (HILDON_ENTRY(appdata->pass_entry));
+			const gchar *numbers = hildon_entry_get_text (HILDON_ENTRY(appdata->number_entry));
 			if ((strlen (users) != 0) &&
 					(strlen (passs) != 0) && (strlen (numbers) != 0))
 			{
-				if(appsettings->password != NULL)
-					g_free(appsettings->password);
+				if(appdata->settings.accountname != NULL)
+					g_free(appdata->settings.accountname);
 
-				if(appsettings->username != NULL)
-					g_free(appsettings->username);
+				if(appdata->settings.password != NULL)
+					g_free(appdata->settings.password);
 
-				if(appsettings->number != NULL)
-					g_free(appsettings->number);
+				if(appdata->settings.username != NULL)
+					g_free(appdata->settings.username);
 
-				appsettings->password = g_strdup(passs);
-				appsettings->username = g_strdup(users);
-				appsettings->number = g_strdup(numbers);
+				if(appdata->settings.number != NULL)
+					g_free(appdata->settings.number);
+
+				appdata->settings.accountname = g_strdup(accounts);
+				appdata->settings.password = g_strdup(passs);
+				appdata->settings.username = g_strdup(users);
+				appdata->settings.number = g_strdup(numbers);
 				return TRUE;
 			}
 			else
@@ -428,29 +479,29 @@ some_page_func (GtkNotebook *nb,
 
 
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(o2_but)))
-				appsettings->provider = O2;
+				appdata->settings.provider = O2;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(voda_but)))
-				appsettings->provider = VODAFONE;
+				appdata->settings.provider = VODAFONE;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(met_but)))
-				appsettings->provider = METEOR;
+				appdata->settings.provider = METEOR;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(three_but)))
-				appsettings->provider = THREE;
+				appdata->settings.provider = THREE;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blueface_but)))
-				appsettings->provider = BLUEFACE;
+				appdata->settings.provider = BLUEFACE;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(voipcheap_but)))
-				appsettings->provider = VOIPCHEAP;
+				appdata->settings.provider = VOIPCHEAP;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smsdiscount_but)))
-				appsettings->provider = SMSDISCOUNT;
+				appdata->settings.provider = SMSDISCOUNT;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lowratevoip_but)))
-				appsettings->provider = LOWRATEVOIP;
+				appdata->settings.provider = LOWRATEVOIP;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(otherbetamax_but)))
-				appsettings->provider = OTHER_BETAMAX;
+				appdata->settings.provider = OTHER_BETAMAX;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(websmsru_but)))
-				appsettings->provider = WEBSMSRU;
+				appdata->settings.provider = WEBSMSRU;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(exetel_but)))
-				appsettings->provider = EXETEL;
+				appdata->settings.provider = EXETEL;
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pennytel_but)))
-							appsettings->provider = PENNYTEL;
+							appdata->settings.provider = PENNYTEL;
 
 			return TRUE;
 		}
@@ -460,11 +511,11 @@ some_page_func (GtkNotebook *nb,
 			GtkRadioButton *no_proxy_but = GTK_RADIO_BUTTON(g_list_nth_data(children, 2));
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(use_proxy_but)))
 			{
-				appsettings->use_proxy_script = TRUE;
+				appdata->settings.use_proxy_script = TRUE;
 			}
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(no_proxy_but)))
 			{
-				appsettings->use_proxy_script = FALSE;
+				appdata->settings.use_proxy_script = FALSE;
 			}
 
 
@@ -483,21 +534,23 @@ some_page_func (GtkNotebook *nb,
 			GtkWidget *url_info_label;
 			url_info_label = GTK_WIDGET(g_list_nth_data(url_page_children, 2));
 
-			if(appsettings->provider == OTHER_BETAMAX)
+			if(appdata->settings.provider == OTHER_BETAMAX)
 			{
+				hildon_entry_set_text (HILDON_ENTRY(urlp_entry), "https://www.provider.com/myaccount/sendsms.php");
+				
 				gtk_label_set_text(GTK_LABEL(url_label), "Betamax URL");
 				gtk_label_set_text(GTK_LABEL(url_info_label),
 						"Please enter the URL of the sms page. \nThis is normally in the format \nhttps://www.provider.com/myaccount/sendsms.php");
 
 			}
-			else if(appsettings->provider == WEBSMSRU || appsettings->provider == BLUEFACE || appsettings->provider == EXETEL
-					|| appsettings->provider == PENNYTEL)
+			else if(appdata->settings.provider == WEBSMSRU || appdata->settings.provider == BLUEFACE || appdata->settings.provider == EXETEL
+					|| appdata->settings.provider == PENNYTEL)
 			{
 				gtk_label_set_text(GTK_LABEL(url_label), "Ignore Setting");
 				gtk_label_set_text(GTK_LABEL(url_info_label), "Please press next.");
 				gtk_editable_set_editable(GTK_EDITABLE(urlp_entry), FALSE);
 			}
-			else if(appsettings->use_proxy_script)
+			else if(appdata->settings.use_proxy_script)
 			{
 				gtk_label_set_text(GTK_LABEL(url_label), "Cabbage Script Address (http://...)");
 				gtk_label_set_text(GTK_LABEL(url_info_label), "Enter the cabbage script address");
@@ -524,10 +577,10 @@ some_page_func (GtkNotebook *nb,
 				/*
 				 * Potential memory leak here
 				 */
-				if(appsettings->proxy_url != NULL)
-					g_free(appsettings->proxy_url);
+				if(appdata->settings.proxy_url != NULL)
+					g_free(appdata->settings.proxy_url);
 
-				appsettings->proxy_url = g_strdup(url);
+				appdata->settings.proxy_url = g_strdup(url);
 				return TRUE;
 			}
 			else
@@ -542,11 +595,11 @@ some_page_func (GtkNotebook *nb,
 			GtkRadioButton *no_save_but = GTK_RADIO_BUTTON(g_list_nth_data(children, 2));
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(yes_save_but)))
 			{
-				appsettings->savemsg = TRUE;
+				appdata->settings.savemsg = TRUE;
 			}
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(no_save_but)))
 			{
-				appsettings->savemsg = FALSE;
+				appdata->settings.savemsg = FALSE;
 			}
 				return TRUE;
 		}
@@ -569,6 +622,15 @@ void aboutButton_clicked (GtkButton* button, AppData *appdata)
 	                        "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8DVWR56KA5F48");
 
 
+}
+
+
+void accountBox_clicked (GtkButton* button, AppData *appdata)
+{
+  	int account = gtk_combo_box_get_active (GTK_COMBO_BOX(appdata->accountBox));
+    get_settings(appdata->gconf_client, account, &appdata->settings);
+	
+	g_debug("INFO: Setting to account: %s\n", appdata->settings.accountname);
 }
 
 
@@ -686,9 +748,10 @@ static void msg_changed(GtkTextBuffer *textbuffer, AppData *appdata)
 gint create_settings_wizard(AppData *appdata)
 {
 	GtkWidget *wizard, *notebook;
-	GtkWidget *user_label, *pass_label, *number_label, *prov_label, *proxy_label, *done_label, *proxy_url_label;
+	GtkWidget *account_hbox, *user_hbox, *pass_hbox, *number_hbox;
+	GtkWidget *account_label, *user_label, *pass_label, *number_label, *prov_label, *proxy_label, *done_label, *proxy_url_label;
 	GtkWidget *proxy_info_label, *url_info_label, *savemsg_label, *savemsg_info_label;
-	GtkWidget *user_entry, *pass_entry, *number_entry, *proxy_url_entry;
+	GtkWidget *proxy_url_entry;
 	GtkWidget *voda_button, *o2_button, *met_button, *three_button, *blueface_button, *voipcheap_button, *smsdiscount_button;
 	GtkWidget *lowratevoip_button, *other_betamax_button, *websmsru_button, *exetel_button, *pennytel_button;
 	GtkWidget *yes_proxy, *no_proxy;
@@ -704,6 +767,11 @@ gint create_settings_wizard(AppData *appdata)
 	proxy_hbox = gtk_vbox_new(FALSE, 8);
 	proxy_url_hbox = gtk_vbox_new(FALSE, 8);
 	savemsg_hbox = gtk_vbox_new(FALSE, 8);
+	
+	account_hbox = gtk_hbox_new(FALSE, 8);
+	user_hbox = gtk_hbox_new(FALSE, 8);
+	pass_hbox = gtk_hbox_new(FALSE, 8);
+	number_hbox = gtk_hbox_new(FALSE, 8);
 
 	char* voda = VODA_L;
 	char* o2 = O2_L;
@@ -718,9 +786,14 @@ gint create_settings_wizard(AppData *appdata)
 	char* exetel = EXETEL_L;
 	char* pennytel = PENNYTEL_L;
 
+	account_label = gtk_label_new ("Account name");
+	gtk_label_set_width_chars (GTK_LABEL(account_label), 12);
 	user_label = gtk_label_new ("Username");
+	gtk_label_set_width_chars (GTK_LABEL(user_label), 12);
 	pass_label = gtk_label_new ("Password");
+	gtk_label_set_width_chars (GTK_LABEL(pass_label), 12);
 	number_label = gtk_label_new("Phone Number");
+	gtk_label_set_width_chars (GTK_LABEL(number_label), 12);
 	prov_label = gtk_label_new ("Provider");
 	proxy_label = gtk_label_new ("Use Cabbage Web Proxy");
 	proxy_url_label = gtk_label_new ("Web Proxy Address (http://...");
@@ -734,14 +807,17 @@ gint create_settings_wizard(AppData *appdata)
 	savemsg_info_label = gtk_label_new(
 		"Allows you to save sent messages.\nAfter saving they appear in the \nconversations application");
 
-	user_entry = hildon_entry_new (HILDON_SIZE_AUTO);
-	pass_entry = hildon_entry_new (HILDON_SIZE_AUTO);
-	number_entry = hildon_entry_new (HILDON_SIZE_AUTO);
+	appdata->account_entry = hildon_entry_new (HILDON_SIZE_AUTO);
+	appdata->user_entry = hildon_entry_new (HILDON_SIZE_AUTO);
+	appdata->pass_entry = hildon_entry_new (HILDON_SIZE_AUTO);
+	appdata->number_entry = hildon_entry_new (HILDON_SIZE_AUTO);
 	proxy_url_entry = hildon_entry_new (HILDON_SIZE_AUTO);
-	gtk_entry_set_visibility(GTK_ENTRY(pass_entry), FALSE);
-	hildon_entry_set_placeholder (HILDON_ENTRY (user_entry),
+	gtk_entry_set_visibility(GTK_ENTRY(appdata->pass_entry), FALSE);
+	hildon_entry_set_placeholder (HILDON_ENTRY (appdata->account_entry),
+	                                  "Enter Account name");
+	hildon_entry_set_placeholder (HILDON_ENTRY (appdata->user_entry),
 	                                  "Enter Username");
-	hildon_entry_set_placeholder (HILDON_ENTRY (pass_entry),
+	hildon_entry_set_placeholder (HILDON_ENTRY (appdata->pass_entry),
 		                                  "Enter Password");
 
 	o2_button = hildon_gtk_radio_button_new(HILDON_SIZE_AUTO , NULL);
@@ -825,17 +901,21 @@ gint create_settings_wizard(AppData *appdata)
 	/*
 	 * Set Default or already set values
 	 */
+	if(appdata->settings.accountname != NULL)
+	{
+		hildon_entry_set_text (HILDON_ENTRY(appdata->account_entry), appdata->settings.accountname);
+	}
 	if(appdata->settings.username != NULL)
 	{
-		hildon_entry_set_text (HILDON_ENTRY(user_entry), appdata->settings.username);
+		hildon_entry_set_text (HILDON_ENTRY(appdata->user_entry), appdata->settings.username);
 	}
 	if(appdata->settings.password != NULL)
 	{
-		hildon_entry_set_text (HILDON_ENTRY(pass_entry), appdata->settings.password);
+		hildon_entry_set_text (HILDON_ENTRY(appdata->pass_entry), appdata->settings.password);
 	}
 	if(appdata->settings.number != NULL)
 	{
-		hildon_entry_set_text (HILDON_ENTRY(number_entry), appdata->settings.number);
+		hildon_entry_set_text (HILDON_ENTRY(appdata->number_entry), appdata->settings.number);
 	}
 	if(appdata->settings.proxy_url != NULL)
 		hildon_entry_set_text (HILDON_ENTRY(proxy_url_entry), appdata->settings.proxy_url);
@@ -927,13 +1007,22 @@ gint create_settings_wizard(AppData *appdata)
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(no_savemsg), TRUE);
 	}
 
-	gtk_box_pack_start (GTK_BOX (up_hbox), user_label, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (up_hbox), user_entry, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (up_hbox), pass_label, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (up_hbox), pass_entry, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (up_hbox), number_label, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (up_hbox), number_entry, FALSE, FALSE, 0);
-
+	gtk_box_pack_start (GTK_BOX (account_hbox), account_label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (account_hbox), appdata->account_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (up_hbox), account_hbox, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start (GTK_BOX (user_hbox), user_label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (user_hbox), appdata->user_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (up_hbox), user_hbox, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start (GTK_BOX (pass_hbox), pass_label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (pass_hbox), appdata->pass_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (up_hbox), pass_hbox, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start (GTK_BOX (number_hbox), number_label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (number_hbox), appdata->number_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (up_hbox), number_hbox, FALSE, FALSE, 0);
+	
 	gtk_box_pack_start (GTK_BOX (prov_hbox), prov_label, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), o2_button, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (prov_hbox), voda_button, FALSE, FALSE, 0);
@@ -993,7 +1082,7 @@ gint create_settings_wizard(AppData *appdata)
 
 	/* Set a function to decide if user can go to next page  */
 	hildon_wizard_dialog_set_forward_page_func (HILDON_WIZARD_DIALOG (wizard),
-	                                            some_page_func, &appdata->settings, NULL);
+	                                            some_page_func, appdata, NULL);
 
 
 	gtk_widget_show_all (wizard);
@@ -1013,11 +1102,13 @@ int main( int argc, char* argv[] )
 	appdata.contactList = (GList *) NULL;
 	appdata.connection = NULL;
 
-	GtkWidget *hboxtop, *hboxbottom, *vbox;
-	GtkWidget *toButton, *settingsButton;
+	GtkWidget *hboxaccount, *hboxtop, *hboxbottom, *vbox;
+	GtkWidget *toButton, *settingsButton, *deleteButton, *newButton;
+	GtkWidget *accountLabel;
+
 	gboolean need_wizard = FALSE;
 
-
+	int account;
 
 	osso_return_t ret;
 
@@ -1044,10 +1135,8 @@ int main( int argc, char* argv[] )
                     GCONF_CLIENT_PRELOAD_NONE, NULL);
 
     appdata.settings.orientation_enabled = FALSE;
-    if(!get_settings(appdata.gconf_client, &appdata.settings))
-    {
+    if(!get_settings(appdata.gconf_client, 0, &appdata.settings))
     	need_wizard = TRUE;
-    }
 
     /* Create the hildon program and setup the title */
     appdata.program = HILDON_PROGRAM(hildon_program_get_instance());
@@ -1062,12 +1151,20 @@ int main( int argc, char* argv[] )
      */
     appdata.menu = HILDON_APP_MENU (hildon_app_menu_new ());
     appdata.aboutButton = gtk_button_new_with_label ("About");
-    settingsButton = gtk_button_new_with_label("Settings");
+    settingsButton = gtk_button_new_with_label("Edit");
+    deleteButton = gtk_button_new_with_label("Delete");
+    newButton = gtk_button_new_with_label("New");
     g_signal_connect_after (appdata.aboutButton, "clicked", G_CALLBACK (aboutButton_clicked), &appdata);
     g_signal_connect (G_OBJECT (settingsButton), "clicked",
                              G_CALLBACK (settingsButton_clicked), &appdata);
+    g_signal_connect (G_OBJECT (deleteButton), "clicked",
+                             G_CALLBACK (deleteButton_clicked), &appdata);
+    g_signal_connect (G_OBJECT (newButton), "clicked",
+                             G_CALLBACK (newButton_clicked), &appdata);
     hildon_app_menu_append (appdata.menu, GTK_BUTTON (appdata.aboutButton));
     hildon_app_menu_append (appdata.menu, GTK_BUTTON (settingsButton));
+    hildon_app_menu_append (appdata.menu, GTK_BUTTON (deleteButton));
+    hildon_app_menu_append (appdata.menu, GTK_BUTTON (newButton));
 
     gtk_widget_show_all (GTK_WIDGET (appdata.menu));
     hildon_window_set_app_menu (HILDON_WINDOW (appdata.messageWindow), appdata.menu);
@@ -1076,10 +1173,21 @@ int main( int argc, char* argv[] )
     /*
     * create the main window UI
     */
+    hboxaccount = gtk_hbox_new(FALSE, 8);
     hboxtop = gtk_hbox_new(FALSE, 8);
     hboxbottom = gtk_hbox_new(FALSE, 8);
     vbox = gtk_vbox_new(FALSE, 8);
-
+	
+	accountLabel = gtk_label_new ("From ");
+	appdata.accountBox = gtk_combo_box_new_text ();
+	for (account = 0; ; account++) {
+		if (!get_settings(appdata.gconf_client, account, &appdata.settings))
+			break;
+		gtk_combo_box_append_text (GTK_COMBO_BOX(appdata.accountBox), appdata.settings.accountname);
+	}
+	gtk_combo_box_set_active (GTK_COMBO_BOX(appdata.accountBox), 0);
+	get_settings(appdata.gconf_client, 0, &appdata.settings);
+	
     toButton = gtk_button_new_with_label("To :");
     appdata.sendButton = gtk_button_new_with_label("Send");
 
@@ -1090,11 +1198,14 @@ int main( int argc, char* argv[] )
     gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(appdata.msgEditor), GTK_WRAP_WORD_CHAR);
     appdata.msgSizeLabel = gtk_label_new ("0 Characters");
 
+    gtk_box_pack_start (GTK_BOX (hboxaccount), accountLabel, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (hboxaccount), appdata.accountBox, TRUE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (hboxtop), toButton, FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (hboxtop), appdata.toEditor, TRUE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (hboxbottom), appdata.sendButton, FALSE, FALSE, 0);
 
     gtk_box_pack_end (GTK_BOX (hboxbottom), appdata.msgSizeLabel, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox), hboxaccount, FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), hboxtop, FALSE, FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), appdata.msgEditor, TRUE, TRUE, 0);
     gtk_box_pack_end (GTK_BOX (vbox), hboxbottom, FALSE, FALSE, 0);
@@ -1106,39 +1217,12 @@ int main( int argc, char* argv[] )
      */
     appdata.msgBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(appdata.msgEditor));
 
-	if(need_wizard)
-	{
-		gint wizard_response = create_settings_wizard(&appdata);
-
-		if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
-		{
-			gtk_widget_set_sensitive(GTK_WIDGET(appdata.sendButton), TRUE);
-			g_debug("wizard response is good in main \n");
-
-			set_username(appdata.gconf_client, appdata.settings.username);
-			set_password(appdata.gconf_client, appdata.settings.password);
-			set_number(appdata.gconf_client, appdata.settings.number);
-			set_provider(appdata.gconf_client, appdata.settings.provider);
-			set_proxy(appdata.gconf_client, appdata.settings.use_proxy_script);
-			set_proxy_url(appdata.gconf_client, appdata.settings.proxy_url);
-			set_savemsg(appdata.gconf_client, appdata.settings.savemsg);
-		}
-		else
-		{
-			/*
-			 * The finish button wasn't pressed.
-			 * TODO Do something here to check settings and possibly reshow the wizard and a banner showing that the user has to click
-			 * finish
-			 */
-			gtk_widget_set_sensitive(GTK_WIDGET(appdata.sendButton), FALSE);
-			GtkWidget *banner;
-			banner = hildon_banner_show_information(GTK_WIDGET(appdata.messageWindow), NULL,
-						"Please re enter your settings as there appears to be a problem. When running please continue to the end and press finish");
-			hildon_banner_set_timeout(HILDON_BANNER(banner), 10000);
-			g_debug("main wizard response is %d \n", wizard_response);
-		}
+	if(need_wizard) {
+		gtk_widget_set_sensitive(GTK_WIDGET(appdata.sendButton), FALSE);
+		newButton_clicked(NULL, &appdata);
 	}
-    /* Quit program when window is closed. */
+
+	/* Quit program when window is closed. */
     g_signal_connect (G_OBJECT (appdata.messageWindow), "delete_event",
     	      G_CALLBACK (gtk_main_quit), NULL);
 
@@ -1147,6 +1231,9 @@ int main( int argc, char* argv[] )
     		G_CALLBACK (gtk_main_quit), NULL);
 
     /* Callbacks for button presses */
+    g_signal_connect (G_OBJECT (appdata.accountBox), "changed",
+                             G_CALLBACK (accountBox_clicked), &appdata);
+							 
     g_signal_connect (G_OBJECT (toButton), "clicked",
                          G_CALLBACK (toButton_clicked), &appdata);
 
