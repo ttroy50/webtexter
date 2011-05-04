@@ -26,15 +26,16 @@
 G_BEGIN_DECLS
 
 #define GCONF_NODE "/apps/m_webtexter"
-#define GCONF_USER_KEY "/apps/m_webtexter/username"
-#define GCONF_PASS_KEY "/apps/m_webtexter/password"
-#define GCONF_NUMBER_KEY "/apps/m_webtexter/number"
-#define GCONF_PROV_KEY "/apps/m_webtexter/provider"
-#define GCONF_PROXY_KEY "/apps/m_webtexter/use_proxy"
-#define GCONF_SAVEMSG_KEY "/apps/m_webtexter/savemsg"
-#define GCONF_EMULATOR_KEY "/apps/m_webtexter/emulator"
-#define GCONF_PROXY_URL_KEY "/apps/m_webtexter/proxy_url"
-#define GCONF_CURL_TIME_KEY "/apps/m_webtexter/curl_time"
+#define GCONF_ACCOUNT_KEY "/accountname"
+#define GCONF_USER_KEY "/username"
+#define GCONF_PASS_KEY "/password"
+#define GCONF_NUMBER_KEY "/number"
+#define GCONF_PROV_KEY "/provider"
+#define GCONF_PROXY_KEY "/use_proxy"
+#define GCONF_SAVEMSG_KEY "/savemsg"
+#define GCONF_EMULATOR_KEY "/emulator"
+#define GCONF_PROXY_URL_KEY "/proxy_url"
+#define GCONF_CURL_TIME_KEY "/curl_time"
 
 
 #define VODA_L "Vodafone Ireland"
@@ -76,6 +77,7 @@ typedef enum {
 
 typedef struct
 {
+	gchar* accountname;
 	gchar* username;
 	gchar* password;
 	gchar* number;
@@ -91,14 +93,8 @@ typedef struct
 } AppSettings;
 
 void setup_gconf(GConfClient* client);
-gboolean get_settings(GConfClient *client, AppSettings *settings);
-gboolean set_username(GConfClient *client, const gchar* username);
-gboolean set_number(GConfClient *client, const gchar* number);
-gboolean set_password(GConfClient *client, const gchar* password);
-gboolean set_provider(GConfClient *client, gint provider);
-gboolean set_proxy(GConfClient *client, gboolean use_proxy);
-gboolean set_proxy_url(GConfClient *client, const gchar* proxy_url);
-gboolean set_savemsg(GConfClient *client, gboolean savemsg);
+gboolean get_settings(GConfClient *client, int account, AppSettings *settings);
+gboolean set_settings(GConfClient *client, int account, AppSettings *settings);
 gint get_max_msg_size(AppSettings *settings);
 
 G_END_DECLS

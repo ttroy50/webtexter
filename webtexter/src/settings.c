@@ -27,6 +27,7 @@
 #include "settings.h"
 #include <gconf/gconf.h>
 #include <gconf/gconf-client.h>
+#include <stdio.h>
 
 void setup_gconf(GConfClient *client)
 {
@@ -41,8 +42,17 @@ void setup_gconf(GConfClient *client)
 
 }
 
-gboolean get_settings(GConfClient *client, AppSettings *settings)
+static char *gconf_build_key (int account, char *key)
 {
+	static char rc[64];
+	
+	snprintf (rc, 64, GCONF_NODE "/%u%s", account, key);
+	return rc;
+}
+
+gboolean get_settings(GConfClient *client, int account, AppSettings *settings)
+{
+	settings->accountname = NULL;
 	settings->username = NULL;
 	settings->password =  NULL;
 	settings->number = NULL;
@@ -54,15 +64,16 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 	settings->proxy_url = NULL;
 	settings->extra_logging = FALSE;
 
-	settings->username = gconf_client_get_string(client,GCONF_USER_KEY, NULL);
-	settings->password = gconf_client_get_string(client,GCONF_PASS_KEY, NULL);
-	settings->number = gconf_client_get_string(client,GCONF_NUMBER_KEY, NULL);
-	settings->provider = gconf_client_get_int(client,GCONF_PROV_KEY, NULL);
-	settings->use_proxy_script = gconf_client_get_bool(client,GCONF_PROXY_KEY, NULL);
-	settings->savemsg = gconf_client_get_bool(client,GCONF_SAVEMSG_KEY, NULL);
-	settings->emulator = gconf_client_get_bool(client,GCONF_EMULATOR_KEY, NULL);
-	settings->proxy_url = gconf_client_get_string(client,GCONF_PROXY_URL_KEY, NULL);
-	settings->curl_timeout = gconf_client_get_int(client,GCONF_CURL_TIME_KEY, NULL);
+	settings->accountname = gconf_client_get_string(client,gconf_build_key(account, GCONF_ACCOUNT_KEY), NULL);
+	settings->username = gconf_client_get_string(client,gconf_build_key(account, GCONF_USER_KEY), NULL);
+	settings->password = gconf_client_get_string(client,gconf_build_key(account, GCONF_PASS_KEY), NULL);
+	settings->number = gconf_client_get_string(client,gconf_build_key(account, GCONF_NUMBER_KEY), NULL);
+	settings->provider = gconf_client_get_int(client,gconf_build_key(account, GCONF_PROV_KEY), NULL);
+	settings->use_proxy_script = gconf_client_get_bool(client,gconf_build_key(account, GCONF_PROXY_KEY), NULL);
+	settings->savemsg = gconf_client_get_bool(client,gconf_build_key(account, GCONF_SAVEMSG_KEY), NULL);
+	settings->emulator = gconf_client_get_bool(client,gconf_build_key(account, GCONF_EMULATOR_KEY), NULL);
+	settings->proxy_url = gconf_client_get_string(client,gconf_build_key(account, GCONF_PROXY_URL_KEY), NULL);
+	settings->curl_timeout = gconf_client_get_int(client,gconf_build_key(account, GCONF_CURL_TIME_KEY), NULL);
 
 
 	if(settings->curl_timeout <= 0)
@@ -100,9 +111,6 @@ gboolean get_settings(GConfClient *client, AppSettings *settings)
 		return FALSE;
 	}
 
-
-
-
 	return TRUE;
 }
 
@@ -135,58 +143,29 @@ gint get_max_msg_size(AppSettings *settings)
 	}
 }
 
-gboolean set_username(GConfClient *client, const gchar* username)
+gboolean set_settings(GConfClient *client, int account, AppSettings *settings)
 {
-	return gconf_client_set_string (client,
-			GCONF_USER_KEY,
-            username,
-            NULL);
-}
-
-gboolean set_password(GConfClient *client, const gchar* password)
-{
-	return gconf_client_set_string (client,
-			GCONF_PASS_KEY,
-           	password,
-            NULL);
-}
-
-gboolean set_number(GConfClient *client, const gchar* number)
-{
-	return gconf_client_set_string (client,
-			GCONF_NUMBER_KEY,
-           	number,
-            NULL);
-}
-
-gboolean set_provider(GConfClient *client, gint provider)
-{
-	return gconf_client_set_int (client,
-			GCONF_PROV_KEY,
-           	provider,
-            NULL);
-}
-
-gboolean set_proxy(GConfClient *client, gboolean use_proxy)
-{
-	return gconf_client_set_bool (client,
-			GCONF_PROXY_KEY,
-           	use_proxy,
-            NULL);
-}
-
-gboolean set_proxy_url(GConfClient *client, const gchar* proxy_url)
-{
-	return gconf_client_set_string (client,
-			GCONF_PROXY_URL_KEY,
-            proxy_url,
-            NULL);
-}
-
-gboolean set_savemsg(GConfClient *client, gboolean savemsg)
-{
-	return gconf_client_set_bool (client,
-			GCONF_SAVEMSG_KEY,
-           	savemsg,
-            NULL);
+	if (settings) {
+		gconf_client_set_string(client,gconf_build_key(account, GCONF_ACCOUNT_KEY), settings->accountname, NULL);
+		gconf_client_set_string(client,gconf_build_key(account, GCONF_USER_KEY), settings->username, NULL);
+		gconf_client_set_string(client,gconf_build_key(account, GCONF_PASS_KEY), settings->password, NULL);
+		gconf_client_set_string(client,gconf_build_key(account, GCONF_NUMBER_KEY), settings->number, NULL);
+		gconf_client_set_int(client,gconf_build_key(account, GCONF_PROV_KEY), settings->provider, NULL);
+		gconf_client_set_bool(client,gconf_build_key(account, GCONF_PROXY_KEY), settings->use_proxy_script, NULL);
+		gconf_client_set_bool(client,gconf_build_key(account, GCONF_SAVEMSG_KEY), settings->savemsg, NULL);
+		gconf_client_set_string(client,gconf_build_key(account, GCONF_PROXY_URL_KEY), settings->proxy_url, NULL);
+	}
+	else
+	{
+		gconf_client_unset(client,gconf_build_key(account, GCONF_ACCOUNT_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_USER_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_PASS_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_NUMBER_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_PROV_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_PROXY_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_SAVEMSG_KEY), NULL);
+		gconf_client_unset(client,gconf_build_key(account, GCONF_PROXY_URL_KEY), NULL);
+	}
+	
+	return TRUE;
 }

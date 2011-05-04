@@ -73,6 +73,8 @@ typedef struct
 	GtkWidget *contactChooser;
 	GtkWidget *msgSizeLabel;
 	GtkWidget *sendButton;
+	GtkWidget *accountBox;
+	GtkWidget *account_entry, *user_entry, *pass_entry, *number_entry;
 
 	HildonAppMenu *menu;
 	GtkWidget *aboutButton;
