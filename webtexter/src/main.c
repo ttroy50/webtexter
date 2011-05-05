@@ -304,6 +304,7 @@ static void toButton_clicked (GtkButton* button, AppData *appdata)
 
 void settingsButton_clicked(GtkButton* button, AppData *appdata)
 {
+	int account;
 	gint wizard_response = create_settings_wizard(appdata);
 	
 	if(wizard_response == HILDON_WIZARD_DIALOG_FINISH)
