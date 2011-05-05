@@ -35,7 +35,7 @@
 gint pennytel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_Proxy *proxy)
 {
 	CURL *curl;
-	CURLcode res;
+	CURLcode res = ERROR_OTHER;
 	struct curl_slist *chunk = NULL;
 
 	gchar *to_encoded = xml_encode(to);
@@ -71,12 +71,13 @@ gint pennytel_send_message(AppSettings *settings, gchar* to, gchar* message, HTT
 	  }
 
 	  /* Perform the request, res will get the return code */
-	  res = curl_easy_perform(curl);
+	  if (curl_easy_perform(curl) == 0)
+		  res = SUCCESS;
 
 	  /* always cleanup */
 	  curl_easy_cleanup(curl);
 	}
 
-	return SUCCESS;
+	return res;
 }
 
