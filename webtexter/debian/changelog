@@ -1,8 +1,8 @@
 webtexter (0.9) unstable; urgency=low
 
-  * Added support for multiple providers
+  * Added support for multiple providers - Jonathan Schultz <jonathan@imatix.com>
 
- -- Jonathan Schultz <jonathan@imatix.com>  Wed, 4 May 2011 18:42:55 +1000
+ -- Thom Troy <ttroy50@gmail.com>  Wed, 26 May 2011 15:12:55 +1000
  
 webtexter (0.8.1) unstable; urgency=low
 
