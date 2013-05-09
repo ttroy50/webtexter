@@ -71,7 +71,8 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	gchar *user_encoded = url_encode(settings->username);
 	gchar *pass_encoded = url_encode(settings->password);
 	gchar *number_encoded = url_encode(settings->number);
-	gchar *url = g_strdup_printf("username=%s&password=%s&from=%s&to=%s&text=%s",
+	gchar *url = g_strdup_printf("%s?username=%s&password=%s&from=%s&to=%s&text=%s",
+			baseurl,
 			user_encoded, pass_encoded,
 			number_encoded, to_encoded, msg_encoded);
 
@@ -81,7 +82,7 @@ gint betamax_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP
 	g_free(pass_encoded);
 	g_free(number_encoded);
 
-	http_send_curl(baseurl, sender, HTTP_POST, url, proxy);
+	http_send_curl(url, sender, HTTP_GET, "", proxy);
 
 	if(settings->extra_logging)
 		g_debug("returned html is %s", sender->buffer->str);
