@@ -34,50 +34,51 @@
 
 gint pennytel_send_message(AppSettings *settings, gchar* to, gchar* message, HTTP_Proxy *proxy)
 {
-	CURL *curl;
-	CURLcode res = ERROR_OTHER;
-	struct curl_slist *chunk = NULL;
+    http_sender *sender;
+    sender = g_new0(http_sender, 1);
+    sender->timeout = settings->curl_timeout;
 
-	gchar *to_encoded = xml_encode(to);
-	gchar *msg_encoded = xml_encode(message);
-	gchar *user_encoded = xml_encode(settings->username);
-	gchar *pass_encoded = xml_encode(settings->password);
+    gchar *to_encoded;
+    if (g_str_has_prefix(to, "+"))
+        to_encoded = url_encode(&to[1]);
+    else
+        to_encoded = url_encode(to);
+    gchar *msg_encoded = url_encode(message);
+    gchar *user_encoded = url_encode(settings->username);
+    gchar *pass_encoded = url_encode(settings->password);
+    gchar *number_encoded = url_encode(settings->number);
+    gchar *url = g_strdup_printf("https://www.pennytel.com.au/sms?user=%s&password=%s&sender=%s&destination=%s&text=%s",
+            user_encoded, pass_encoded,
+            number_encoded, to_encoded, msg_encoded);
 
-	gchar *post = g_strdup_printf("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <SOAP-ENV:Header/> "
-				      "<SOAP-ENV:Body>  <sendSMS xmlns=\"\">  <ID xsi:type=\"xsd:string\">%s</ID><Password xsi:type=\"xsd:string\">%s</Password><type xsi:type=\"xsd:int\">1</type><To xsi:type=\"xsd:string\">%s</To><Message xsi:type=\"xsd:string\">%s</Message><Date xsi:type=\"xsd:datetime\">1970-01-01T00:00:00</Date></sendSMS> </SOAP-ENV:Body></SOAP-ENV:Envelope>",
-				      user_encoded, pass_encoded,
-				      to_encoded, msg_encoded);
+    g_free(to_encoded);
+    g_free(msg_encoded);
+    g_free(user_encoded);
+    g_free(pass_encoded);
+    g_free(number_encoded);
 
-	g_free(to_encoded);
-	g_free(msg_encoded);
-	g_free(user_encoded);
-	g_free(pass_encoded);
+    http_send_curl(url, sender, HTTP_GET, "", proxy);
 
-	curl = curl_easy_init();
-	if(curl) {
-	  curl_easy_setopt(curl, CURLOPT_URL, "http://pennytel.com/pennytelapi/services/PennyTelAPI");
-	  chunk = curl_slist_append(chunk, "SOAPAction: \"\"");
-	  res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-	  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post);
+    if(settings->extra_logging)
+        g_debug("returned html is %s", sender->buffer->str);
 
-	  /* try to use the proxy */
-	  if(proxy != NULL)
-	  {
-		  if(proxy->use_proxy)
-		  {
-			  curl_easy_setopt(curl, CURLOPT_PROXY, proxy->proxy_host);
-			  curl_easy_setopt(curl, CURLOPT_PROXYPORT, proxy->proxy_port);
-		  }
-	  }
+    if(((g_strstr_len(sender->buffer->str, sender->buffer->len, "Queued")) != NULL))
+    {
+        g_debug("Message sent to Pennytel");
+        g_free(url);
+        g_string_free(sender->buffer, TRUE);
+        return SUCCESS;
+    }
+    else
+    {
+        if(settings->extra_logging)
+            g_debug("post data is %s", url);
 
-	  /* Perform the request, res will get the return code */
-	  if (curl_easy_perform(curl) == 0)
-		  res = SUCCESS;
+        g_free(url);
+        g_string_free(sender->buffer, TRUE);
+        return ERROR_OTHER;
+    }
 
-	  /* always cleanup */
-	  curl_easy_cleanup(curl);
-	}
-
-	return res;
+    return ERROR_OTHER;
 }
 
